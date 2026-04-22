@@ -1,0 +1,349 @@
+import { useState, useEffect } from 'react';
+import { MapPin, Building2, Landmark, Calendar, Palette, Filter, Loader, TypeIcon } from 'lucide-react';
+import { CulturalPoint, typeIcons } from '../types/place';
+import { renderToString } from 'react-dom/server'
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+
+const DEFAULT_CENTER: [number, number] = [-30.033, -51.222];
+
+
+export function MapView() {
+  const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const [isLoading, setIsLoading] = useState(true);
+  const [culturalPoints, setCulturalPoints] = useState<CulturalPoint[]>([]);
+  const [followUser, setFollowUser] = useState(false);
+  const [mapReady, setMapReady] = useState(false);
+  const [userPosition, setUserPosition] = useState<{ lat: number; lon: number } | null>(null);
+  const [nearbyPlace, setNearbyPlace] = useState<CulturalPoint | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setMapReady(true);
+
+      // Import CSS do Leaflet
+      import('leaflet/dist/leaflet.css');
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        setIsLoading(true);
+        const { api } = await import('../services/api');
+        const places = await api.getAllPlaces();
+        setCulturalPoints(places);
+      } catch (error) {
+        console.error('Erro ao carregar locais:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPlaces();
+  }, []);
+
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        setUserPosition({
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude,
+        });
+      },
+      (err) => console.error('Erro de geolocalização:', err),
+      { enableHighAccuracy: true }
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, []);
+
+  useEffect(() => {
+    if (!userPosition || culturalPoints.length === 0) {
+      setNearbyPlace(null);
+      return;
+    }
+
+    const NEARBY_THRESHOLD = 100;
+    const nearby = culturalPoints.find((place) => {
+      const R = 6371e3;
+      const φ1 = (userPosition.lat * Math.PI) / 180;
+      const φ2 = (place.lat * Math.PI) / 180;
+      const Δφ = ((place.lat - userPosition.lat) * Math.PI) / 180;
+      const Δλ = ((place.lon - userPosition.lon) * Math.PI) / 180;
+
+      const a =
+        Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+        Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+
+      return distance <= NEARBY_THRESHOLD;
+    });
+
+    setNearbyPlace(nearby || null);
+  }, [userPosition, culturalPoints]);
+
+  const filters = [
+    { id: 'all', label: 'Todos', icon: MapPin },
+    { id: 'museum', label: 'Museus', icon: Building2 },
+    { id: 'monument', label: 'Monumentos', icon: Landmark },
+    { id: 'event', label: 'Eventos', icon: Calendar },
+    { id: 'artwork', label: 'Espaços Artísticos', icon: Palette },
+  ];
+
+  const filteredPoints = selectedFilter === 'all'
+    ? culturalPoints
+    : culturalPoints.filter(p => p.type === selectedFilter);
+
+  
+  const handleMarkerClick = (id) => {
+    navigate(`/local/${id}`)
+  }
+
+  if (!mapReady) {
+    return (
+      <div className="relative w-full h-screen bg-[#FAFAFA] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="w-12 h-12 animate-spin text-[#E63946]" />
+          <p className="text-gray-600">Carregando mapa...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full h-screen">
+      <div className="absolute top-0 left-0 right-0 z-[1000] bg-white/95 backdrop-blur-sm shadow-md p-4">
+        <div className="flex items-center mb-3">
+          <h1 className="text-[#E63946] font-semibold">CultPoa</h1>
+          <div className="flex-1" />
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+          {filters.map((filter) => {
+            const Icon = filter.icon;
+            return (
+              <button
+                key={filter.id}
+                onClick={() => setSelectedFilter(filter.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all ${
+                  selectedFilter === filter.id
+                    ? 'bg-[#E63946] text-white shadow-lg'
+                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="text-sm">{filter.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="absolute inset-0 mt-28">
+        <LeafletMap
+          culturalPoints={filteredPoints}
+          userPosition={userPosition}
+          followUser={followUser}
+          onMapMove={() => setFollowUser(false)}
+          onMarkerClick={handleMarkerClick}
+        />
+      </div>
+
+      <button
+        onClick={() => setFollowUser(true)}
+        className="fixed bottom-22 right-4 z-[1000] w-14 h-14 bg-[#2A9D8F] text-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#238276] transition-colors"
+      >
+        <MapPin className="w-6 h-6" />
+      </button>
+
+      {isLoading && (
+        <div className="fixed top-32 left-4 z-[1000] bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+          <Loader className="w-4 h-4 animate-spin text-[#E63946]" />
+          <span className="text-sm text-gray-700">Carregando pontos...</span>
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+function LeafletMap({
+  culturalPoints,
+  userPosition,
+  followUser,
+  onMapMove,
+  onMarkerClick,
+}: {
+  culturalPoints: CulturalPoint[];
+  userPosition: { lat: number; lon: number } | null;
+  followUser: boolean;
+  onMapMove: () => void;
+}) {
+  const [MapComponents, setMapComponents] = useState<any>(null);
+
+  useEffect(() => {
+    const loadMap = async () => {
+      const [
+        { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents },
+        { default: MarkerClusterGroup },
+        L,
+      ] = await Promise.all([
+        import('react-leaflet'),
+        import('react-leaflet-cluster'),
+        import('leaflet'),
+      ]);
+
+      const userIcon = new L.Icon({
+        iconUrl:
+          'data:image/svg+xml;base64,' +
+          btoa(`
+            <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="18" fill="#2A9D8F" stroke="white" stroke-width="3"/>
+              <circle cx="20" cy="20" r="8" fill="white"/>
+            </svg>
+          `),
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+        popupAnchor: [0, -20],
+      });
+    
+
+      const createPlaceIcon = (type) => {
+        const Icon = typeIcons[type] || MapPin
+
+        const iconHtml = renderToString(
+          React.createElement(Icon)
+        )
+
+        return new L.DivIcon({
+          html: iconHtml,
+          className: 'text-gray-700 hover:bg-gray-100 bg-white rounded-full p-2 shadow',
+          iconSize: [40, 40],
+iconAnchor: [20, 20],
+        })
+      }
+
+      function ChangeView({ center, follow }: { center: [number, number]; follow: boolean }) {
+        const map = useMap();
+        useEffect(() => {
+          if (follow) {
+            map.setView(center, 15, { animate: true });
+          }
+        }, [center, follow, map]);
+        return null;
+      }
+
+      function MapEvents() {
+        useMapEvents({
+          dragstart: onMapMove,
+          zoomstart: onMapMove,
+        });
+        return null;
+      }
+
+      setMapComponents({
+        MapContainer,
+        TileLayer,
+        Marker,
+        Popup,
+        MarkerClusterGroup,
+        ChangeView,
+        MapEvents,
+        userIcon,
+        createPlaceIcon,
+      });
+    };
+
+    loadMap();
+  }, [onMapMove]);
+
+  if (!MapComponents) {
+    return (
+      <div className="w-full h-full bg-[#F1FAEE] flex items-center justify-center">
+        <Loader className="w-8 h-8 animate-spin text-[#E63946]" />
+      </div>
+    );
+  }
+
+  const {
+    MapContainer,
+    TileLayer,
+    Marker,
+    Popup,
+    MarkerClusterGroup,
+    ChangeView,
+    MapEvents: MapEventsComponent,
+    userIcon,
+    createPlaceIcon,
+  } = MapComponents;
+
+  const mapCenter =
+    userPosition && followUser
+      ? ([userPosition.lat, userPosition.lon] as [number, number])
+      : DEFAULT_CENTER;
+
+  return (
+    <MapContainer
+      center={DEFAULT_CENTER}
+      zoom={15}
+      style={{ height: '100%', width: '100%', zIndex: 0 }}
+      zoomControl={false}
+    >
+      <TileLayer
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      />
+
+      <MapEventsComponent />
+
+      {userPosition && (
+        <>
+          <ChangeView center={mapCenter} follow={followUser} />
+          <Marker position={[userPosition.lat, userPosition.lon]} icon={userIcon}>
+            <Popup>
+              <div className="text-center">
+                <p className="font-medium">Você está aqui</p>
+              </div>
+            </Popup>
+          </Marker>
+        </>
+      )}
+
+      <MarkerClusterGroup
+        disableClusteringAtZoom={17}
+        spiderfyOnMaxZoom={true}
+        showCoverageOnHover={false}
+        chunkedLoading
+          iconCreateFunction={(cluster) => {
+    const count = cluster.getChildCount()
+
+    return L.divIcon({
+      html: `
+        <div class="flex items-center justify-center w-12 h-12 bg-white rounded-full font-bold font-2xl text-gray-600 shadow">
+          ${count}
+        </div>
+      `,
+      className: '',
+      iconSize: [40, 40],
+    })
+  }}
+      >{culturalPoints.map((place) => (
+      <Marker
+          key={place.id}
+          position={[place.lat, place.lon]}
+          icon={createPlaceIcon(place.type)}
+          eventHandlers={{
+            click: () => onMarkerClick(place.id),
+      }}
+/>
+))}
+      </MarkerClusterGroup>
+    </MapContainer>
+  );
+}
+

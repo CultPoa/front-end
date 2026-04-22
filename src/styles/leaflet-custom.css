@@ -1,0 +1,68 @@
+/* Leaflet Custom Styles for CultPOA */
+
+/* Fix for marker icons */
+.leaflet-container {
+  font-family: inherit;
+}
+
+/* Popup customization */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  min-width: 220px;
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Cluster customization */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background-color: rgba(230, 57, 70, 0.2) !important;
+}
+
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+  background-color: #E63946 !important;
+  color: white;
+  font-weight: 600;
+}
+
+/* Remove leaflet attribution on mobile */
+@media (max-width: 640px) {
+  .leaflet-control-attribution {
+    font-size: 8px;
+  }
+}
+
+/* Zoom control positioning */
+.leaflet-top.leaflet-right {
+  display: none;
+}
+
+/* Popup close button */
+.leaflet-popup-close-button {
+  padding: 8px !important;
+  font-size: 20px !important;
+  color: #6B7280 !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: #E63946 !important;
+}
+
+/* Fix line clamp in popup */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
