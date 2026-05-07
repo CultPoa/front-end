@@ -1,85 +1,89 @@
-import { useState } from 'react';
-import { Calendar, MapPin, Clock, Filter, Plus, ExternalLink, BadgeCheck, Users } from 'lucide-react';
-import { motion } from 'motion/react';
+import { useState, useEffect } from "react";
+import {
+  Calendar,
+  MapPin,
+  Clock,
+  Plus,
+  ExternalLink,
+  Loader2,
+} from "lucide-react";
+import { motion } from "motion/react";
 
-interface Event {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-  location: string;
-  category: string;
-  source: 'official' | 'community';
-  image: string;
-  description: string;
+interface EventLocation {
+  name: string;
+  city: string;
+  state: string;
+  neighborhood?: string;
 }
 
-const events: Event[] = [
-  {
-    id: '1',
-    title: 'Exposição: Arte Contemporânea Gaúcha',
-    date: '2026-04-25',
-    time: '14:00',
-    location: 'MARGS',
-    category: 'Exposição',
-    source: 'official',
-    image: 'https://images.unsplash.com/photo-1577083552431-6e5fd01c3d90?w=800',
-    description: 'Uma celebração da arte contemporânea produzida no Rio Grande do Sul.',
-  },
-  {
-    id: '2',
-    title: 'Festival de Jazz POA 2026',
-    date: '2026-05-10',
-    time: '19:00',
-    location: 'Theatro São Pedro',
-    category: 'Música',
-    source: 'official',
-    image: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=800',
-    description: 'O maior festival de jazz da região sul do Brasil.',
-  },
-  {
-    id: '3',
-    title: 'Caminhada Cultural Centro Histórico',
-    date: '2026-04-28',
-    time: '10:00',
-    location: 'Praça da Matriz',
-    category: 'Tour',
-    source: 'community',
-    image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800',
-    description: 'Tour guiado pelos principais pontos históricos do centro de Porto Alegre.',
-  },
-  {
-    id: '4',
-    title: 'Oficina de Fotografia Urbana',
-    date: '2026-05-05',
-    time: '15:00',
-    location: 'Casa de Cultura Mario Quintana',
-    category: 'Workshop',
-    source: 'community',
-    image: 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800',
-    description: 'Aprenda técnicas de fotografia urbana com profissionais.',
-  },
-];
+interface Event {
+  id: number;
+  name: string;
+  start_date: string;
+  images: { lg: string; original: string };
+  location: EventLocation;
+  url: string;
+}
+
+function formatLocation(location: EventLocation): string {
+  const parts = [
+    location.name !== "Local a definir" ? location.name : null,
+    location.neighborhood || null,
+    location.city,
+    location.state,
+  ].filter(Boolean);
+  return parts.join(", ");
+}
+
+function parseStartDate(isoDate: string) {
+  const d = new Date(isoDate);
+  return {
+    date: d.toLocaleDateString("pt-BR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
+    time: d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+  };
+}
 
 export function Events() {
-  const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showAddEvent, setShowAddEvent] = useState(false);
 
-  const filters = [
-    { id: 'all', label: 'Todos' },
-    { id: 'official', label: 'Oficiais' },
-    { id: 'community', label: 'Comunidade' },
-  ];
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch(
+          "https://www.sympla.com.br/api/discovery-bff/search/category-type?has_banner=1&themes=99&need_pay=1&formats=80%2C87%2C89&ongoing=0&is_free=0&only=name%2Cstart_date%2Cend_date%2Cimages%2Cevent_type%2Cduration_type%2Clocation%2Cid%2Cglobal_score%2Cstart_date_formats%2Cend_date_formats%2Curl%2Ccompany%2Ctype&filter_sold_out=1&sort=location_score&location_score=month-trending-score&type=normal&events_ids=3314458%2C50114663%2C3314458&location=-30.03405%2C+-51.21363&range=&service=%2Fv4%2Fsearch%2Fquery",
+          {
+            headers: {
+              Accept: "application/json, text/plain, */*",
+              "Sec-GPC": "1",
+            },
+            method: "GET",
+          },
+        );
+        const data = await response.json();
+        setEvents(data.data || []);
+      } catch (error) {
+        console.error("Erro ao carregar eventos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const filteredEvents = selectedFilter === 'all'
-    ? events
-    : events.filter(e => e.source === selectedFilter);
+    fetchEvents();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-24">
       <div className="sticky top-0 bg-white shadow-sm z-10 p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-[#E63946]">Eventos Culturais</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-[#E63946] font-bold text-xl">
+            Eventos Culturais
+          </h1>
           <button
             onClick={() => setShowAddEvent(true)}
             className="w-10 h-10 bg-[#2A9D8F] text-white rounded-full flex items-center justify-center hover:bg-[#238276] transition-colors shadow-lg"
@@ -87,150 +91,90 @@ export function Events() {
             <Plus className="w-5 h-5" />
           </button>
         </div>
-
-        <div className="flex gap-2">
-          {filters.map((filter) => (
-            <button
-              key={filter.id}
-              onClick={() => setSelectedFilter(filter.id)}
-              className={`px-4 py-2 rounded-full transition-all ${
-                selectedFilter === filter.id
-                  ? 'bg-[#E63946] text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="p-4 space-y-4">
-        {filteredEvents.map((event, index) => (
-          <motion.div
-            key={event.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
-          >
-            <div className="relative h-48">
-              <img
-                src={event.image}
-                alt={event.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute top-3 right-3">
-                {event.source === 'official' ? (
-                  <div className="flex items-center gap-1 bg-[#2A9D8F] text-white px-3 py-1 rounded-full text-xs">
-                    <BadgeCheck className="w-3 h-3" />
-                    <span>Oficial</span>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+            <Loader2 className="w-8 h-8 animate-spin mb-2" />
+            <p>Buscando eventos em Porto Alegre...</p>
+          </div>
+        ) : (
+          events.map((event, index) => {
+            const { date, time } = parseStartDate(event.start_date);
+            const locationText = formatLocation(event.location);
+
+            return (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-gray-100"
+              >
+                <div className="relative h-48 bg-gradient-to-br from-[#E63946] to-[#2A9D8F] flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                    <Calendar className="w-16 h-16 text-white" />
                   </div>
-                ) : (
-                  <div className="flex items-center gap-1 bg-[#F4A261] text-white px-3 py-1 rounded-full text-xs">
-                    <Users className="w-3 h-3" />
-                    <span>Comunidade</span>
+
+                  <img
+                    src={event.images.lg || event.images.original}
+                    alt={event.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.opacity = "0";
+                    }}
+                  />
+                </div>
+
+                <div className="p-4">
+                  <h3 className="text-gray-900 font-semibold mb-3 line-clamp-2 leading-tight">
+                    {event.name}
+                  </h3>
+
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Calendar className="w-4 h-4 text-[#E63946]" />
+                      <span>{date}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Clock className="w-4 h-4 text-[#E63946]" />
+                      <span>{time}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <MapPin className="w-4 h-4 text-[#E63946]" />
+                      <span className="truncate">{locationText}</span>
+                    </div>
                   </div>
-                )}
-              </div>
-            </div>
 
-            <div className="p-4">
-              <h3 className="text-gray-900 mb-2">{event.title}</h3>
-              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{event.description}</p>
-
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <Calendar className="w-4 h-4 text-[#E63946]" />
-                  <span>{new Date(event.date).toLocaleDateString('pt-BR', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                  })}</span>
+                  <a
+                    href={event.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-4 bg-[#E63946] text-white rounded-xl font-bold hover:bg-[#D62839] transition-all active:scale-[0.98]"
+                  >
+                    Acessar evento
+                    <ExternalLink className="w-5 h-5" />
+                  </a>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <Clock className="w-4 h-4 text-[#E63946]" />
-                  <span>{event.time}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <MapPin className="w-4 h-4 text-[#E63946]" />
-                  <span>{event.location}</span>
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <button className="flex-1 py-3 bg-[#E63946] text-white rounded-xl hover:bg-[#D62839] transition-colors">
-                  Salvar evento
-                </button>
-                <button className="w-12 h-12 bg-gray-100 text-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors">
-                  <ExternalLink className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        ))}
+              </motion.div>
+            );
+          })
+        )}
       </div>
 
       {showAddEvent && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          onClick={() => setShowAddEvent(false)}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
-        >
-          <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-t-3xl sm:rounded-2xl p-6 max-w-md w-full"
-          >
-            <h2 className="text-gray-900 mb-4">Adicionar Evento</h2>
-            <p className="text-gray-600 mb-6">
-              Contribua com a comunidade adicionando eventos culturais de Porto Alegre.
-            </p>
-
-            <div className="space-y-4">
-              <input
-                type="text"
-                placeholder="Nome do evento"
-                className="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E63946]"
-              />
-              <input
-                type="date"
-                className="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E63946]"
-              />
-              <input
-                type="time"
-                className="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E63946]"
-              />
-              <input
-                type="text"
-                placeholder="Local"
-                className="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E63946]"
-              />
-              <textarea
-                placeholder="Descrição"
-                rows={3}
-                className="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E63946] resize-none"
-              />
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={() => setShowAddEvent(false)}
-                  className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={() => setShowAddEvent(false)}
-                  className="flex-1 py-3 bg-[#2A9D8F] text-white rounded-xl hover:bg-[#238276] transition-colors"
-                >
-                  Enviar para análise
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white p-6 rounded-2xl w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Adicionar Evento</h2>
+            <button
+              onClick={() => setShowAddEvent(false)}
+              className="w-full py-3 bg-gray-100 rounded-xl"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
