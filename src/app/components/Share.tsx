@@ -34,7 +34,7 @@ export function Share() {
         </div>
       </div>
 
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 pb-24">
         <div className="bg-gradient-to-br from-[#E63946] to-[#F4A261] rounded-2xl p-6 text-white">
           <h2 className="mb-2">Compartilhe sua experiência!</h2>
           <p className="text-sm opacity-90">
@@ -83,18 +83,21 @@ export function Share() {
             >
               <h3 className="text-gray-900 mb-4">Pré-visualização</h3>
 
-              <div className="relative rounded-xl overflow-hidden mb-4">
-                <img
-                  src={selectedImage}
-                  alt="Preview"
-                  className="w-full h-auto"
-                />
-                <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm text-white px-3 py-2 rounded-lg">
-                  <p className="text-sm">#cultpoa #PortoAlegre</p>
-                </div>
-              </div>
 
+              <div className="flex justify-center">
+                  <div className="relative rounded-xl overflow-hidden mb-4">
+                    <img
+                      src={selectedImage}
+                      alt="Preview"
+                      className="w-100 h-58 object-cover"
+                    />
+                    <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm text-white px-3 py-2 rounded-lg">
+                      <p className="text-sm">#cultpoa #PortoAlegre</p>
+                    </div>
+                  </div>
+              </div>
               <div className="space-y-3">
+                <a href="https://www.instagram.com.br" target="_blank" rel="noopener noreferrer">
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleShare('Instagram')}
@@ -103,6 +106,7 @@ export function Share() {
                   <Instagram className="w-5 h-5" />
                   <span>Compartilhar no Instagram</span>
                 </motion.button>
+                </a>
 
                 <div className="flex gap-3">
                   <motion.button
