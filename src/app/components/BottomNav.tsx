@@ -1,4 +1,4 @@
-import { MapPin, Calendar, Award, MessageCircle, User } from 'lucide-react';
+import { MapPin, Calendar, Award, MessageCircle, User, ImageUp } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 
@@ -9,6 +9,7 @@ export function BottomNav() {
   const navItems = [
     { path: '/', icon: MapPin, label: 'Mapa' },
     { path: '/eventos', icon: Calendar, label: 'Eventos' },
+    {path: '/compartilhar', icon: ImageUp, label: 'Compartilhar'},
     { path: '/insignias', icon: Award, label: 'Insígnias' },
     { path: '/mensagens', icon: MessageCircle, label: 'Mensagens' },
     { path: '/perfil', icon: User, label: 'Perfil' },
