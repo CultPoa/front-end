@@ -1,6 +1,6 @@
-import { Place, CulturalPoint, typeColors } from '../types/place';
+import { Place, CulturalPoint, typeColors } from "../types/place";
 
-const API_BASE_URL = 'http://localhost:8000/api';
+export const API_BASE_URL = "http://localhost:8000/api";
 
 let placesCache: CulturalPoint[] | null = null;
 
@@ -9,9 +9,9 @@ export const api = {
     if (placesCache) return placesCache;
 
     const res = await fetch(`${API_BASE_URL}/places`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
@@ -23,7 +23,7 @@ export const api = {
 
     const mapped: CulturalPoint[] = data.map((el) => ({
       id: el.id,
-      name: el.name || 'Sem nome',
+      name: el.name || "Sem nome",
       lat: el.lat,
       lon: el.lon,
       type: el.type,
@@ -35,7 +35,7 @@ export const api = {
           : undefined),
       wikipedia: el.wikipedia || undefined,
       website: el.website || undefined,
-      color: typeColors[el.type] || '#2A9D8F',
+      color: typeColors[el.type] || "#2A9D8F",
     }));
 
     placesCache = mapped;
@@ -49,9 +49,9 @@ export const api = {
     }
 
     const res = await fetch(`${API_BASE_URL}/places/${id}`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
