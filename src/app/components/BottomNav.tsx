@@ -1,18 +1,25 @@
-import { MapPin, Calendar, Award, MessageCircle, User, ImageUp } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'motion/react';
+import {
+  MapPin,
+  Calendar,
+  Award,
+  MessageCircle,
+  User,
+  ImageUp,
+} from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { motion } from "motion/react";
 
 export function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const navItems = [
-    { path: '/', icon: MapPin, label: 'Mapa' },
-    { path: '/eventos', icon: Calendar, label: 'Eventos' },
-    {path: '/compartilhar', icon: ImageUp, label: 'Compartilhar'},
-    { path: '/insignias', icon: Award, label: 'Insígnias' },
-    { path: '/mensagens', icon: MessageCircle, label: 'Mensagens' },
-    { path: '/perfil', icon: User, label: 'Perfil' },
+    { path: "/", icon: MapPin, label: "Mapa" },
+    { path: "/eventos", icon: Calendar, label: "Eventos" },
+    { path: "/compartilhar", icon: ImageUp, label: "Fotos" },
+    { path: "/insignias", icon: Award, label: "Coleção" },
+    { path: "/mensagens", icon: MessageCircle, label: "Mensagem" },
+    { path: "/perfil", icon: User, label: "Perfil" },
   ];
 
   return (
@@ -32,17 +39,17 @@ export function BottomNav() {
                 <motion.div
                   layoutId="activeTab"
                   className="absolute inset-0 bg-[#E63946]/10 rounded-xl"
-                  transition={{ type: 'spring', duration: 0.5 }}
+                  transition={{ type: "spring", duration: 0.5 }}
                 />
               )}
               <Icon
                 className={`w-5 h-5 relative z-10 transition-colors ${
-                  isActive ? 'text-[#E63946]' : 'text-gray-500'
+                  isActive ? "text-[#E63946]" : "text-gray-500"
                 }`}
               />
               <span
                 className={`text-xs relative z-10 transition-colors ${
-                  isActive ? 'text-[#E63946]' : 'text-gray-500'
+                  isActive ? "text-[#E63946]" : "text-gray-500"
                 }`}
               >
                 {item.label}
