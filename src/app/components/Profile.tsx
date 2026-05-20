@@ -715,6 +715,7 @@ function AuthPage({ onLogin }) {
         throw new Error("Email ou senha incorretos.");
       }
       const data = await res.json();
+      localStorage.setItem("auth", data.access_token);
       await onLogin(data.access_token);
     } catch (err) {
       setError(err.message);
@@ -753,6 +754,7 @@ function AuthPage({ onLogin }) {
       if (loginRes.ok) {
         const loginData = await loginRes.json();
         await onLogin(loginData.access_token);
+        localStorage.setItem("auth", loginData.access_token);
       } else {
         setMode("login");
         setError("Conta criada! Faça login para continuar.");

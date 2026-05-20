@@ -13,6 +13,7 @@ import { CulturalPoint, typeIcons } from "../types/place";
 import { renderToString } from "react-dom/server";
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { isUserNearPlace } from "../utils/geo";
 
 const DEFAULT_CENTER: [number, number] = [-30.033, -51.222];
 const MAP_STATE_KEY = "cultpoa-map-state";
@@ -87,24 +88,11 @@ export function MapView() {
       return;
     }
 
-    const NEARBY_THRESHOLD = 100;
-    const nearby = culturalPoints.find((place) => {
-      const R = 6371e3;
-      const φ1 = (userPosition.lat * Math.PI) / 180;
-      const φ2 = (place.lat * Math.PI) / 180;
-      const Δφ = ((place.lat - userPosition.lat) * Math.PI) / 180;
-      const Δλ = ((place.lon - userPosition.lon) * Math.PI) / 180;
+    const nearby = culturalPoints.find((place) =>
+      isUserNearPlace(userPosition, place),
+    );
 
-      const a =
-        Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-        Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const distance = R * c;
-
-      return distance <= NEARBY_THRESHOLD;
-    });
-
-    setNearbyPlace(nearby || null);
+    setNearbyPlace(nearby ?? null);
   }, [userPosition, culturalPoints]);
 
   const filters = [
