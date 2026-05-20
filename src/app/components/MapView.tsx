@@ -15,6 +15,7 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 const DEFAULT_CENTER: [number, number] = [-30.033, -51.222];
+const MAP_STATE_KEY = "cultpoa-map-state";
 
 export function MapView() {
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
@@ -28,6 +29,14 @@ export function MapView() {
   } | null>(null);
   const [nearbyPlace, setNearbyPlace] = useState<CulturalPoint | null>(null);
   const navigate = useNavigate();
+
+  const savedMapState = (() => {
+    try {
+      return JSON.parse(localStorage.getItem(MAP_STATE_KEY) || "null");
+    } catch {
+      return null;
+    }
+  })();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -162,6 +171,12 @@ export function MapView() {
           culturalPoints={filteredPoints}
           userPosition={userPosition}
           followUser={followUser}
+          initialCenter={
+            savedMapState?.center
+              ? [savedMapState.center.lat, savedMapState.center.lng]
+              : DEFAULT_CENTER
+          }
+          initialZoom={savedMapState?.zoom || 15}
           onMapMove={() => setFollowUser(false)}
           onMarkerClick={handleMarkerClick}
         />
@@ -188,12 +203,16 @@ function LeafletMap({
   culturalPoints,
   userPosition,
   followUser,
+  initialCenter,
+  initialZoom,
   onMapMove,
   onMarkerClick,
 }: {
   culturalPoints: CulturalPoint[];
   userPosition: { lat: number; lon: number } | null;
   followUser: boolean;
+  initialCenter: [number, number];
+  initialZoom: number;
   onMapMove: () => void;
 }) {
   const [MapComponents, setMapComponents] = useState<any>(null);
@@ -272,7 +291,43 @@ function LeafletMap({
         MapEvents,
         userIcon,
         createPlaceIcon,
+        PersistMapState,
       });
+
+      function PersistMapState() {
+        const map = useMapEvents({
+          moveend: () => {
+            const center = map.getCenter();
+
+            localStorage.setItem(
+              MAP_STATE_KEY,
+              JSON.stringify({
+                center: {
+                  lat: center.lat,
+                  lng: center.lng,
+                },
+                zoom: map.getZoom(),
+              }),
+            );
+          },
+          zoomend: () => {
+            const center = map.getCenter();
+
+            localStorage.setItem(
+              MAP_STATE_KEY,
+              JSON.stringify({
+                center: {
+                  lat: center.lat,
+                  lng: center.lng,
+                },
+                zoom: map.getZoom(),
+              }),
+            );
+          },
+        });
+
+        return null;
+      }
     };
 
     loadMap();
@@ -294,6 +349,7 @@ function LeafletMap({
     MarkerClusterGroup,
     ChangeView,
     MapEvents: MapEventsComponent,
+    PersistMapState,
     userIcon,
     createPlaceIcon,
   } = MapComponents;
@@ -305,8 +361,8 @@ function LeafletMap({
 
   return (
     <MapContainer
-      center={DEFAULT_CENTER}
-      zoom={15}
+      center={initialCenter}
+      zoom={initialZoom}
       style={{ height: "100%", width: "100%", zIndex: 0 }}
       zoomControl={false}
     >
@@ -316,6 +372,7 @@ function LeafletMap({
       />
 
       <MapEventsComponent />
+      <PersistMapState />
 
       {userPosition && (
         <>
