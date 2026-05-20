@@ -83,7 +83,7 @@ export function Events() {
       <div className="sticky top-0 bg-white shadow-sm z-10 p-4">
         <div className="flex items-center justify-between">
           <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl'>
-            Eventos Culturais
+            Eventos
           </h1>
           <button
             onClick={() => setShowAddEvent(true)}
