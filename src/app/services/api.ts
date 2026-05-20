@@ -62,4 +62,25 @@ export const api = {
     const data: Place = await res.json();
     return data;
   },
+
+  async unlockBadge(placeId: string): Promise<void> {
+    const token = sessionStorage.getItem("cultpoa_token");
+
+    if (!token) {
+      throw new Error("Usuário não autenticado");
+    }
+
+    const res = await fetch(`${API_BASE_URL}/badges/badge`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ placeId }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Erro ao desbloquear badge: ${res.status}`);
+    }
+  },
 };

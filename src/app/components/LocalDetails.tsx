@@ -70,15 +70,28 @@ export function LocalDetails() {
     );
   }
 
-  const handleRegisterVisit = () => {
-    setVisited(true);
-    toast.success('Visita registrada!', {
-      description: 'Você ganhou uma nova insígnia! 🏅',
-      action: {
-        label: 'Ver insígnias',
-        onClick: () => navigate('/insignias'),
-      },
-    });
+  const handleRegisterVisit = async () => {
+    if (!local) return;
+
+    try {
+      const { api } = await import('../services/api');
+
+      await api.unlockBadge(String(local.id));
+
+      setVisited(true);
+
+      toast.success('Visita registrada!', {
+        description: 'Você ganhou uma nova insígnia! 🏅',
+        action: {
+          label: 'Ver insígnias',
+          onClick: () => navigate('/insignias'),
+        },
+      });
+    } catch (error) {
+      console.error('Erro ao registrar visita:', error);
+
+      toast.error('Não foi possível registrar a visita');
+    }
   };
 
   const nextImage = () => {

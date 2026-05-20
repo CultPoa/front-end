@@ -17,7 +17,7 @@ export interface CulturalPoint {
   name: string;
   type: string;
   lat: number;
-  lng: number;
+  lon: number;
   color: string;
   description?: string;
   image?: string;
