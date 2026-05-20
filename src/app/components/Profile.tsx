@@ -17,6 +17,7 @@ import {
   ImageIcon,
   ChevronRight,
   AlertCircle,
+  Pencil,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
@@ -162,13 +163,17 @@ function useAuth() {
 }
 
 function SettingsPage({ user, token, onBack, onUserUpdate }) {
-  const [section, setSection] = useState(null); // null | "email" | "password" | "avatar"
+  const [section, setSection] = useState(null); // null | "name" | "email" | "password" | "avatar"
 
   const [toast, setToast] = useState(null);
   const showToast = (message, type = "success") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
+
+  // name
+  const [name, setName] = useState(user?.name || "");
+  const [nameLoading, setNameLoading] = useState(false);
 
   // email
   const [email, setEmail] = useState(user?.email || "");
@@ -184,6 +189,26 @@ function SettingsPage({ user, token, onBack, onUserUpdate }) {
   const [avatarUrl, setAvatarUrl] = useState(user?.image_url || "");
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [avatarPreviewOk, setAvatarPreviewOk] = useState(!!user?.image_url);
+
+  const handleNameSave = async (e) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    setNameLoading(true);
+    try {
+      const res = await patchMe(token, { name: name.trim() });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.detail || "Erro ao atualizar nome.");
+      }
+      onUserUpdate({ name: name.trim() });
+      showToast("Nome atualizado com sucesso!");
+      setSection(null);
+    } catch (err) {
+      showToast(err.message, "error");
+    } finally {
+      setNameLoading(false);
+    }
+  };
 
   const handleEmailSave = async (e) => {
     e.preventDefault();
@@ -261,6 +286,14 @@ function SettingsPage({ user, token, onBack, onUserUpdate }) {
       sub: "Alterar imagem de perfil",
     },
     {
+      id: "name",
+      icon: Pencil,
+      color: "#6C63FF",
+      bg: "#6C63FF1A",
+      label: "Nome de usuário",
+      sub: user?.name,
+    },
+    {
       id: "email",
       icon: Mail,
       color: "#E63946",
@@ -336,6 +369,48 @@ function SettingsPage({ user, token, onBack, onUserUpdate }) {
                   </button>
                 );
               })}
+            </motion.div>
+          ) : section === "name" ? (
+            <motion.div
+              key="name"
+              initial={{ opacity: 0, x: 32 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -32 }}
+              className="mt-4"
+            >
+              <div className="bg-white rounded-2xl shadow-xl p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <button
+                    onClick={() => setSection(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
+                  <h2 className="text-sm font-semibold text-gray-800">
+                    Alterar nome
+                  </h2>
+                </div>
+                <form onSubmit={handleNameSave} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1.5">
+                      Novo nome
+                    </label>
+                    <InputField
+                      icon={Pencil}
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Seu nome"
+                    />
+                  </div>
+                  <SubmitButton
+                    loading={nameLoading}
+                    label="Salvar nome"
+                    loadingLabel="Salvando..."
+                  />
+                </form>
+              </div>
             </motion.div>
           ) : section === "email" ? (
             <motion.div
