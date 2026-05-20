@@ -10,7 +10,7 @@ export function Share() {
 
   const mockImages = [
     "https://images.unsplash.com/photo-1564399579883-451a5d44ec08?w=600",
-    "https://images.unsplash.com/photo-1577083552431-6e5fd01c3d90?w=600",
+    "https://images.unsplash.com/photo-1564399579883-451a5d44ec08?w=600",
     "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=600",
   ];
 
