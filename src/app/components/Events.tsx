@@ -56,7 +56,8 @@ export function Events() {
     const fetchEvents = async () => {
       try {
         const response = await fetch(
-          "https://www.sympla.com.br/api/discovery-bff/search/category-type?has_banner=1&themes=99&need_pay=1&formats=80%2C87%2C89&ongoing=0&is_free=0&only=name%2Cstart_date%2Cend_date%2Cimages%2Cevent_type%2Cduration_type%2Clocation%2Cid%2Cglobal_score%2Cstart_date_formats%2Cend_date_formats%2Curl%2Ccompany%2Ctype&filter_sold_out=1&sort=location_score&location_score=month-trending-score&type=normal&events_ids=3314458%2C50114663%2C3314458&location=-30.03405%2C+-51.21363&range=&service=%2Fv4%2Fsearch%2Fquery",
+          "https://www.sympla.com.br/api/discovery-bff/search/category-type?service=%2Fv4%2Fsearch%2Fquery&only=name,start_date,end_date,images,event_type,duration_type,location,id,global_score,start_date_formats,end_date_formats,url,company,type,organizer&has_banner=1&themes=99&sort=day-trending-score&formats=80,87,89&type=normal&city=Porto+Alegre&limit=24&location=Porto+Alegre&page=1&dt=&p=",
+
           {
             headers: {
               Accept: "application/json, text/plain, */*",
