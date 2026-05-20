@@ -22,24 +22,20 @@ export function Share() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
-      <div className="sticky top-0 bg-white shadow-sm z-10 p-4">
+      <div className="sticky top-0 bg-white shadow-sm z-10 p-4 pb-2">
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-700" />
-          </button>
-          <h1 className="text-[#E63946]">Compartilhar</h1>
+          <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl'>
+            Minhas fotos
+          </h1>
         </div>
       </div>
 
       <div className="p-4 space-y-6 pb-24">
         <div className="bg-gradient-to-br from-[#E63946] to-[#F4A261] rounded-2xl p-6 text-white">
-          <h2 className="mb-2">Compartilhe sua experiência!</h2>
+          <h2 className="mb-2">Compartilhe sua experiência</h2>
           <p className="text-sm opacity-90">
             Tire uma foto do local que visitou e compartilhe nas redes sociais
-            com #cultpoa
+            com a #cultpoa!
           </p>
         </div>
 
@@ -138,9 +134,9 @@ export function Share() {
           <div className="bg-[#2A9D8F]/10 border border-[#2A9D8F]/30 rounded-xl p-4">
             <h4 className="text-gray-900 mb-2">Dica</h4>
             <p className="text-sm text-gray-700">
-              Use sempre a hashtag{" "}
-              <span className="text-[#E63946]">#cultpoa</span> para fazer parte
-              da comunidade e aparecer no feed oficial do aplicativo!
+              Use a hashtag <span className="text-[#E63946]">#cultpoa</span>{" "}
+              para fazer parte da comunidade e aparecer no feed oficial do
+              aplicativo!
             </p>
           </div>
         </div>

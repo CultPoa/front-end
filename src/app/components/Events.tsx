@@ -81,7 +81,7 @@ export function Events() {
     <div className="min-h-screen bg-[#FAFAFA] pb-24">
       <div className="sticky top-0 bg-white shadow-sm z-10 p-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-[#E63946] font-bold text-xl">
+          <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl'>
             Eventos Culturais
           </h1>
           <button

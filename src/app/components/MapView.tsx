@@ -1,29 +1,40 @@
-import { useState, useEffect } from 'react';
-import { MapPin, Building2, Landmark, Calendar, Palette, Filter, Loader, TypeIcon } from 'lucide-react';
-import { CulturalPoint, typeIcons } from '../types/place';
-import { renderToString } from 'react-dom/server'
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import {
+  MapPin,
+  Building2,
+  Landmark,
+  Calendar,
+  Palette,
+  Filter,
+  Loader,
+  TypeIcon,
+} from "lucide-react";
+import { CulturalPoint, typeIcons } from "../types/place";
+import { renderToString } from "react-dom/server";
+import React from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 const DEFAULT_CENTER: [number, number] = [-30.033, -51.222];
 
-
 export function MapView() {
-  const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(true);
   const [culturalPoints, setCulturalPoints] = useState<CulturalPoint[]>([]);
   const [followUser, setFollowUser] = useState(false);
   const [mapReady, setMapReady] = useState(false);
-  const [userPosition, setUserPosition] = useState<{ lat: number; lon: number } | null>(null);
+  const [userPosition, setUserPosition] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
   const [nearbyPlace, setNearbyPlace] = useState<CulturalPoint | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       setMapReady(true);
 
       // Import CSS do Leaflet
-      import('leaflet/dist/leaflet.css');
+      import("leaflet/dist/leaflet.css");
     }
   }, []);
 
@@ -31,11 +42,11 @@ export function MapView() {
     const fetchPlaces = async () => {
       try {
         setIsLoading(true);
-        const { api } = await import('../services/api');
+        const { api } = await import("../services/api");
         const places = await api.getAllPlaces();
         setCulturalPoints(places);
       } catch (error) {
-        console.error('Erro ao carregar locais:', error);
+        console.error("Erro ao carregar locais:", error);
       } finally {
         setIsLoading(false);
       }
@@ -54,8 +65,8 @@ export function MapView() {
           lon: pos.coords.longitude,
         });
       },
-      (err) => console.error('Erro de geolocalização:', err),
-      { enableHighAccuracy: true }
+      (err) => console.error("Erro de geolocalização:", err),
+      { enableHighAccuracy: true },
     );
 
     return () => navigator.geolocation.clearWatch(watchId);
@@ -88,21 +99,21 @@ export function MapView() {
   }, [userPosition, culturalPoints]);
 
   const filters = [
-    { id: 'all', label: 'Todos', icon: MapPin },
-    { id: 'museum', label: 'Museus', icon: Building2 },
-    { id: 'monument', label: 'Monumentos', icon: Landmark },
-    { id: 'event', label: 'Eventos', icon: Calendar },
-    { id: 'artwork', label: 'Espaços Artísticos', icon: Palette },
+    { id: "all", label: "Todos", icon: MapPin },
+    { id: "museum", label: "Museus", icon: Building2 },
+    { id: "monument", label: "Monumentos", icon: Landmark },
+    { id: "event", label: "Eventos", icon: Calendar },
+    { id: "artwork", label: "Espaços Artísticos", icon: Palette },
   ];
 
-  const filteredPoints = selectedFilter === 'all'
-    ? culturalPoints
-    : culturalPoints.filter(p => p.type === selectedFilter);
+  const filteredPoints =
+    selectedFilter === "all"
+      ? culturalPoints
+      : culturalPoints.filter((p) => p.type === selectedFilter);
 
-  
   const handleMarkerClick = (id) => {
-    navigate(`/local/${id}`)
-  }
+    navigate(`/local/${id}`);
+  };
 
   if (!mapReady) {
     return (
@@ -118,8 +129,10 @@ export function MapView() {
   return (
     <div className="relative w-full h-screen">
       <div className="absolute top-0 left-0 right-0 z-[1000] bg-white/95 backdrop-blur-sm shadow-md p-4">
-        <div className="flex items-center mb-3">
-          <h1 className="text-[#E63946] font-semibold">CultPoa</h1>
+        <div className="flex items-center justify-center mb-1">
+          <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl'>
+            Cultpoa
+          </h1>
           <div className="flex-1" />
         </div>
 
@@ -132,8 +145,8 @@ export function MapView() {
                 onClick={() => setSelectedFilter(filter.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all ${
                   selectedFilter === filter.id
-                    ? 'bg-[#E63946] text-white shadow-lg'
-                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                    ? "bg-[#E63946] text-white shadow-lg"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -167,7 +180,6 @@ export function MapView() {
           <span className="text-sm text-gray-700">Carregando pontos...</span>
         </div>
       )}
-
     </div>
   );
 }
@@ -193,14 +205,14 @@ function LeafletMap({
         { default: MarkerClusterGroup },
         L,
       ] = await Promise.all([
-        import('react-leaflet'),
-        import('react-leaflet-cluster'),
-        import('leaflet'),
+        import("react-leaflet"),
+        import("react-leaflet-cluster"),
+        import("leaflet"),
       ]);
 
       const userIcon = new L.Icon({
         iconUrl:
-          'data:image/svg+xml;base64,' +
+          "data:image/svg+xml;base64," +
           btoa(`
             <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
               <circle cx="20" cy="20" r="18" fill="#2A9D8F" stroke="white" stroke-width="3"/>
@@ -211,24 +223,28 @@ function LeafletMap({
         iconAnchor: [20, 20],
         popupAnchor: [0, -20],
       });
-    
 
       const createPlaceIcon = (type) => {
-        const Icon = typeIcons[type] || MapPin
+        const Icon = typeIcons[type] || MapPin;
 
-        const iconHtml = renderToString(
-          React.createElement(Icon)
-        )
+        const iconHtml = renderToString(React.createElement(Icon));
 
         return new L.DivIcon({
           html: iconHtml,
-          className: 'text-gray-700 hover:bg-gray-100 bg-white rounded-full p-2 shadow',
+          className:
+            "text-gray-700 hover:bg-gray-100 bg-white rounded-full p-2 shadow",
           iconSize: [40, 40],
-iconAnchor: [20, 20],
-        })
-      }
+          iconAnchor: [20, 20],
+        });
+      };
 
-      function ChangeView({ center, follow }: { center: [number, number]; follow: boolean }) {
+      function ChangeView({
+        center,
+        follow,
+      }: {
+        center: [number, number];
+        follow: boolean;
+      }) {
         const map = useMap();
         useEffect(() => {
           if (follow) {
@@ -291,7 +307,7 @@ iconAnchor: [20, 20],
     <MapContainer
       center={DEFAULT_CENTER}
       zoom={15}
-      style={{ height: '100%', width: '100%', zIndex: 0 }}
+      style={{ height: "100%", width: "100%", zIndex: 0 }}
       zoomControl={false}
     >
       <TileLayer
@@ -304,7 +320,10 @@ iconAnchor: [20, 20],
       {userPosition && (
         <>
           <ChangeView center={mapCenter} follow={followUser} />
-          <Marker position={[userPosition.lat, userPosition.lon]} icon={userIcon}>
+          <Marker
+            position={[userPosition.lat, userPosition.lon]}
+            icon={userIcon}
+          >
             <Popup>
               <div className="text-center">
                 <p className="font-medium">Você está aqui</p>
@@ -319,31 +338,31 @@ iconAnchor: [20, 20],
         spiderfyOnMaxZoom={true}
         showCoverageOnHover={false}
         chunkedLoading
-          iconCreateFunction={(cluster) => {
-    const count = cluster.getChildCount()
+        iconCreateFunction={(cluster) => {
+          const count = cluster.getChildCount();
 
-    return L.divIcon({
-      html: `
+          return L.divIcon({
+            html: `
         <div class="flex items-center justify-center w-12 h-12 bg-white rounded-full font-bold font-2xl text-gray-600 shadow">
           ${count}
         </div>
       `,
-      className: '',
-      iconSize: [40, 40],
-    })
-  }}
-      >{culturalPoints.map((place) => (
-      <Marker
-          key={place.id}
-          position={[place.lat, place.lon]}
-          icon={createPlaceIcon(place.type)}
-          eventHandlers={{
-            click: () => onMarkerClick(place.id),
-      }}
-/>
-))}
+            className: "",
+            iconSize: [40, 40],
+          });
+        }}
+      >
+        {culturalPoints.map((place) => (
+          <Marker
+            key={place.id}
+            position={[place.lat, place.lon]}
+            icon={createPlaceIcon(place.type)}
+            eventHandlers={{
+              click: () => onMarkerClick(place.id),
+            }}
+          />
+        ))}
       </MarkerClusterGroup>
     </MapContainer>
   );
 }
-

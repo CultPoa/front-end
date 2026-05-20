@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { ArrowLeft, Send, MessageCircle, AlertCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { ArrowLeft, Send, MessageCircle, AlertCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
@@ -15,36 +15,37 @@ interface Message {
 
 const messages: Message[] = [
   {
-    id: '1',
-    locationId: '1',
-    locationName: 'MARGS',
-    text: 'Este museu é incrível! A coleção de arte moderna é de tirar o fôlego.',
-    date: '2026-04-20',
+    id: "1",
+    locationId: "1",
+    locationName: "MARGS",
+    text: "Este museu é incrível! A coleção de arte moderna é de tirar o fôlego.",
+    date: "2026-04-20",
     isOwn: true,
   },
   {
-    id: '2',
-    locationId: '2',
-    locationName: 'Casa de Cultura Mario Quintana',
-    text: 'Lugar perfeito para passar uma tarde. As exposições são sempre interessantes.',
-    date: '2026-04-18',
+    id: "2",
+    locationId: "2",
+    locationName: "Casa de Cultura Mario Quintana",
+    text: "Lugar perfeito para passar uma tarde. As exposições são sempre interessantes.",
+    date: "2026-04-18",
     isOwn: false,
   },
 ];
 
 export function Messages() {
   const navigate = useNavigate();
-  const [selectedLocation, setSelectedLocation] = useState<string>('');
-  const [messageText, setMessageText] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState<string>("");
+  const [messageText, setMessageText] = useState("");
   const maxChars = 200;
 
   const handleSendMessage = () => {
     if (messageText.trim() && selectedLocation) {
-      toast.success('Mensagem enviada!', {
-        description: 'Sua mensagem será moderada antes de aparecer para outros usuários.',
+      toast.success("Mensagem enviada!", {
+        description:
+          "Sua mensagem será moderada antes de aparecer para outros usuários.",
       });
-      setMessageText('');
-      setSelectedLocation('');
+      setMessageText("");
+      setSelectedLocation("");
     }
   };
 
@@ -52,17 +53,12 @@ export function Messages() {
     <div className="min-h-screen bg-[#FAFAFA] pb-24">
       <div className="sticky top-0 bg-white shadow-sm z-10 p-4">
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-700" />
-          </button>
           <div className="flex-1">
-            <h1 className="text-[#E63946]">Mensagens Secretas</h1>
+            <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl'>
+              Mensagens Secretas
+            </h1>
             <p className="text-sm text-gray-600">Deixe sua marca nos locais</p>
           </div>
-          <MessageCircle className="w-8 h-8 text-[#F4A261]" />
         </div>
       </div>
 
@@ -72,7 +68,9 @@ export function Messages() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-700 mb-2">Local visitado</label>
+              <label className="block text-sm text-gray-700 mb-2">
+                Local visitado
+              </label>
               <select
                 value={selectedLocation}
                 onChange={(e) => setSelectedLocation(e.target.value)}
@@ -85,22 +83,32 @@ export function Messages() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-700 mb-2">Sua mensagem</label>
+              <label className="block text-sm text-gray-700 mb-2">
+                Sua mensagem
+              </label>
               <textarea
                 value={messageText}
-                onChange={(e) => setMessageText(e.target.value.slice(0, maxChars))}
+                onChange={(e) =>
+                  setMessageText(e.target.value.slice(0, maxChars))
+                }
                 placeholder="Compartilhe sua experiência..."
                 rows={4}
                 className="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E63946] resize-none"
               />
               <div className="flex items-center justify-between mt-2">
-                <span className={`text-sm ${
-                  messageText.length >= maxChars ? 'text-[#E63946]' : 'text-gray-500'
-                }`}>
+                <span
+                  className={`text-sm ${
+                    messageText.length >= maxChars
+                      ? "text-[#E63946]"
+                      : "text-gray-500"
+                  }`}
+                >
                   {messageText.length}/{maxChars} caracteres
                 </span>
                 {messageText.length >= maxChars && (
-                  <span className="text-xs text-[#E63946]">Limite atingido</span>
+                  <span className="text-xs text-[#E63946]">
+                    Limite atingido
+                  </span>
                 )}
               </div>
             </div>
@@ -125,8 +133,8 @@ export function Messages() {
               disabled={!messageText.trim() || !selectedLocation}
               className={`w-full py-4 rounded-xl transition-all flex items-center justify-center gap-2 ${
                 messageText.trim() && selectedLocation
-                  ? 'bg-[#E63946] text-white hover:bg-[#D62839] shadow-lg'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  ? "bg-[#E63946] text-white hover:bg-[#D62839] shadow-lg"
+                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
               }`}
             >
               <Send className="w-5 h-5" />
@@ -150,10 +158,10 @@ export function Messages() {
                 <div>
                   <h3 className="text-gray-900">{message.locationName}</h3>
                   <p className="text-xs text-gray-500">
-                    {new Date(message.date).toLocaleDateString('pt-BR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
+                    {new Date(message.date).toLocaleDateString("pt-BR", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
                     })}
                   </p>
                 </div>

@@ -43,7 +43,7 @@ export function BottomNav() {
                 />
               )}
               <Icon
-                className={`w-5 h-5 relative z-10 transition-colors ${
+                className={`w-6 h-6 relative z-10 transition-colors ${
                   isActive ? "text-[#E63946]" : "text-gray-500"
                 }`}
               />
@@ -52,7 +52,7 @@ export function BottomNav() {
                   isActive ? "text-[#E63946]" : "text-gray-500"
                 }`}
               >
-                {item.label}
+                {/* {item.label} */}
               </span>
             </button>
           );
