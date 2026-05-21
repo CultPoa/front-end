@@ -715,6 +715,7 @@ function AuthPage({ onLogin }) {
         throw new Error("Email ou senha incorretos.");
       }
       const data = await res.json();
+      localStorage.setItem("auth", data.access_token);
       await onLogin(data.access_token);
     } catch (err) {
       setError(err.message);
@@ -753,6 +754,7 @@ function AuthPage({ onLogin }) {
       if (loginRes.ok) {
         const loginData = await loginRes.json();
         await onLogin(loginData.access_token);
+        localStorage.setItem("auth", loginData.access_token);
       } else {
         setMode("login");
         setError("Conta criada! Faça login para continuar.");
@@ -775,10 +777,13 @@ function AuthPage({ onLogin }) {
           <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4">
             <MapPin className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-white text-2xl font-bold tracking-tight">
-            CultPOA
+          {/* <h1 className="text-white text-2xl font-bold tracking-tight"> */}
+          <h1 className='font-["Dongle"] text-white font-bold text-5xl'>
+            Cultpoa
           </h1>
-          <p className="text-white/75 text-sm mt-1">Cultura em cada esquina</p>
+          <p className="text-white/75 text-basez mt-1">
+            Cultura em cada esquina
+          </p>
         </motion.div>
       </div>
 
@@ -977,7 +982,7 @@ function AuthPage({ onLogin }) {
           </div>
         </motion.div>
         <p className="text-center text-xs text-gray-400 mt-6">
-          CultPOA v1.0.0 • Feito com ❤️ em Porto Alegre
+          Cultpoa 1.0.0 • Feito com ❤️ em Porto Alegre
         </p>
       </div>
     </div>
@@ -1036,14 +1041,7 @@ export function Profile() {
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-24">
       <div className="bg-gradient-to-br from-[#E63946] to-[#F4A261] pt-12 pb-24 px-4">
-        <div className="flex justify-end mb-8">
-          <button
-            onClick={() => setShowSettings(true)}
-            className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
-        </div>
+        <div className="flex justify-end mb-8"></div>
 
         <div className="flex flex-col items-center">
           <div className="relative mb-4">
@@ -1146,7 +1144,7 @@ export function Profile() {
 
         <div className="mt-6 p-4 bg-gray-50 rounded-xl text-center">
           <p className="text-xs text-gray-500">
-            CultPOA v1.0.0 • Feito com ❤️ em Porto Alegre
+            Cultpoa 1.0.0 • Feito com ❤️ em Porto Alegre
           </p>
         </div>
       </div>

@@ -1,16 +1,27 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Clock, Info, BadgeCheck, Camera, Share2, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
-import { motion } from 'motion/react';
-import { toast } from 'sonner';
-import { Place } from '../types/place';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  MapPin,
+  Clock,
+  Info,
+  BadgeCheck,
+  Camera,
+  Share2,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+} from "lucide-react";
+import { motion } from "motion/react";
+import { toast } from "sonner";
+import { Place } from "../types/place";
 
 const handleLocalType = (local: string): string => {
   const types_names: Record<string, string> = {
-    artwork: 'Obra de Arte',
-    museum: 'Museu',
-    monument: 'Monumento',
-    event: 'Evento',
+    artwork: "Obra de Arte",
+    museum: "Museu",
+    monument: "Monumento",
+    event: "Evento",
   };
 
   return types_names[local] ?? local;
@@ -28,12 +39,12 @@ export function LocalDetails() {
     const fetchPlace = async () => {
       try {
         setIsLoading(true);
-        const { api } = await import('../services/api');
+        const { api } = await import("../services/api");
         const data = await api.getPlaceById(id!);
         setLocal(data);
       } catch (error) {
-        console.error('Erro ao carregar local:', error);
-        toast.error('Erro ao carregar informações do local');
+        console.error("Erro ao carregar local:", error);
+        toast.error("Erro ao carregar informações do local");
       } finally {
         setIsLoading(false);
       }
@@ -60,7 +71,7 @@ export function LocalDetails() {
         <div className="text-center">
           <h2 className="text-gray-900 mb-2">Local não encontrado</h2>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="px-6 py-3 bg-[#E63946] text-white rounded-xl hover:bg-[#D62839] transition-colors"
           >
             Voltar ao mapa
@@ -70,6 +81,7 @@ export function LocalDetails() {
     );
   }
 
+<<<<<<< HEAD
   const handleRegisterVisit = async () => {
     if (!local) return;
 
@@ -92,6 +104,17 @@ export function LocalDetails() {
 
       toast.error('Não foi possível registrar a visita');
     }
+=======
+  const handleRegisterVisit = () => {
+    setVisited(true);
+    toast.success("Visita registrada!", {
+      description: "Você ganhou uma nova insígnia! 🏅",
+      action: {
+        label: "Ver insígnias",
+        onClick: () => navigate("/insignias"),
+      },
+    });
+>>>>>>> origin/main
   };
 
   const nextImage = () => {
@@ -106,6 +129,9 @@ export function LocalDetails() {
     <div className="min-h-screen bg-[#FAFAFA]">
       <div className="relative">
         <div className="relative h-80 overflow-hidden bg-gray-200">
+          {images.length === 0 && (
+            <div className="w-full h-full bg-gradient-to-br from-[#696969] to-[#bdbdbd]" />
+          )}
           {images.length > 0 && (
             <>
               <motion.img
@@ -139,7 +165,9 @@ export function LocalDetails() {
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
                         className={`w-2 h-2 rounded-full transition-all ${
-                          index === currentImageIndex ? 'bg-white w-6' : 'bg-white/50'
+                          index === currentImageIndex
+                            ? "bg-white w-6"
+                            : "bg-white/50"
                         }`}
                       />
                     ))}
@@ -158,7 +186,7 @@ export function LocalDetails() {
         </button>
 
         <button
-          onClick={() => toast.info('Recurso de compartilhamento em breve!')}
+          onClick={() => toast.info("Recurso de compartilhamento em breve!")}
           className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
         >
           <Share2 className="w-5 h-5 text-gray-700" />
@@ -202,14 +230,18 @@ export function LocalDetails() {
         <div className="bg-[#2A9D8F]/5 border border-[#2A9D8F]/20 rounded-xl p-2 mb-6 text-center ">
           <div className="flex items-center gap-2">
             <BadgeCheck className="w-5 h-5 text-[#2A9D8F]" />
-            <span className="text-[#2A9D8F]">Conteúdo validado por curadores</span>
+            <span className="text-[#2A9D8F]">
+              Conteúdo validado por curadores
+            </span>
           </div>
         </div>
 
         {local.description && (
           <div className="mb-6">
             <h2 className="text-gray-900 mb-3">Sobre o local</h2>
-            <p className="text-gray-700 leading-relaxed text-justify">{local.description}</p>
+            <p className="text-gray-700 leading-relaxed text-justify">
+              {local.description}
+            </p>
           </div>
         )}
 
@@ -240,15 +272,15 @@ export function LocalDetails() {
               disabled={visited}
               className={`flex-1 py-4 rounded-xl transition-all ${
                 visited
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#E63946] text-white shadow-lg hover:bg-[#D62839]'
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-[#E63946] text-white shadow-lg hover:bg-[#D62839]"
               }`}
             >
-              {visited ? 'Visita já registrada' : 'Registrar visita'}
+              {visited ? "Visita já registrada" : "Registrar visita"}
             </motion.button>
             <motion.button
               whileTap={{ scale: 0.95 }}
-              onClick={() => navigate('/compartilhar')}
+              onClick={() => navigate("/compartilhar")}
               className="w-14 h-14 bg-[#F4A261] text-white rounded-xl flex items-center justify-center shadow-lg hover:bg-[#E89351] transition-colors"
             >
               <Camera className="w-6 h-6" />

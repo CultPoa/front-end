@@ -1,8 +1,15 @@
+<<<<<<< HEAD
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Award, Lock, Calendar } from 'lucide-react';
 import { motion } from 'motion/react';
 import { BadgeCard } from "./BadgeCard";
+=======
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Award, Lock, MapPin, Calendar } from "lucide-react";
+import { motion } from "motion/react";
+>>>>>>> origin/main
 
 interface Badge {
   id: string;
@@ -17,54 +24,54 @@ interface Badge {
 
 const badges: Badge[] = [
   {
-    id: '1',
-    name: 'Explorador Cultural',
-    description: 'Visite seu primeiro local cultural',
-    image: '🎨',
+    id: "1",
+    name: "Explorador Cultural",
+    description: "Visite seu primeiro local cultural",
+    image: "🎨",
     unlocked: true,
-    unlockedAt: '20 de Abril, 2026',
-    locationId: '1',
-    color: '#E63946',
+    unlockedAt: "20 de Abril, 2026",
+    locationId: "1",
+    color: "#E63946",
   },
   {
-    id: '2',
-    name: 'Conhecedor de Museus',
-    description: 'Visite 3 museus diferentes',
-    image: '🏛️',
+    id: "2",
+    name: "Conhecedor de Museus",
+    description: "Visite 3 museus diferentes",
+    image: "🏛️",
     unlocked: false,
-    color: '#F4A261',
+    color: "#F4A261",
   },
   {
-    id: '3',
-    name: 'Guardião da História',
-    description: 'Visite todos os monumentos históricos',
-    image: '🗿',
+    id: "3",
+    name: "Guardião da História",
+    description: "Visite todos os monumentos históricos",
+    image: "🗿",
     unlocked: false,
-    color: '#2A9D8F',
+    color: "#2A9D8F",
   },
   {
-    id: '4',
-    name: 'Amante das Artes',
-    description: 'Participe de 5 eventos culturais',
-    image: '🎭',
+    id: "4",
+    name: "Amante das Artes",
+    description: "Participe de 5 eventos culturais",
+    image: "🎭",
     unlocked: false,
-    color: '#E76F51',
+    color: "#E76F51",
   },
   {
-    id: '5',
-    name: 'Curador POA',
-    description: 'Deixe mensagens em 10 locais diferentes',
-    image: '📝',
+    id: "5",
+    name: "Curador POA",
+    description: "Deixe mensagens em 10 locais diferentes",
+    image: "📝",
     unlocked: false,
-    color: '#264653',
+    color: "#264653",
   },
   {
-    id: '6',
-    name: 'Influencer Cultural',
-    description: 'Compartilhe 20 fotos no Instagram',
-    image: '📸',
+    id: "6",
+    name: "Influencer Cultural",
+    description: "Compartilhe 20 fotos no Instagram",
+    image: "📸",
     unlocked: false,
-    color: '#E63946',
+    color: "#E63946",
   },
 ];
 
@@ -72,23 +79,20 @@ export function Badges() {
   const navigate = useNavigate();
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
 
-  const unlockedCount = badges.filter(b => b.unlocked).length;
+  const unlockedCount = badges.filter((b) => b.unlocked).length;
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] pb-20">
+    <div className="min-h-screen bg-[#FAFAFA] pb-10">
       <div className="sticky top-0 bg-white shadow-sm z-10">
         <div className="flex items-center gap-4 p-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-700" />
-          </button>
           <div className="flex-1">
-            <h1 className="text-[#E63946]">Minhas Insígnias</h1>
-            <p className="text-sm text-gray-600">{unlockedCount} de {badges.length} conquistadas</p>
+            <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl'>
+              Minhas Insígnias
+            </h1>
+            <p className="text-sm text-gray-600">
+              {unlockedCount} de {badges.length} conquistadas
+            </p>
           </div>
-          <Award className="w-8 h-8 text-[#F4A261]" />
         </div>
 
         <div className="px-4 pb-4">
@@ -96,7 +100,7 @@ export function Badges() {
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${(unlockedCount / badges.length) * 100}%` }}
-              transition={{ duration: 1, ease: 'easeOut' }}
+              transition={{ duration: 1, ease: "easeOut" }}
               className="h-full bg-gradient-to-r from-[#E63946] to-[#F4A261] rounded-full"
             />
           </div>
@@ -109,6 +113,7 @@ export function Badges() {
             <div
               key={badge.id}
               onClick={() => setSelectedBadge(badge)}
+<<<<<<< HEAD
               className="cursor-pointer"
             >
               <BadgeCard
@@ -117,6 +122,42 @@ export function Badges() {
                 onSelect={() => setSelectedBadge(badge)}
               />
             </div>
+=======
+              className={`relative p-6 rounded-2xl transition-all ${
+                badge.unlocked
+                  ? "bg-white shadow-lg hover:shadow-xl border-2 border-transparent hover:border-[#E63946]/20"
+                  : "bg-gray-100 opacity-60"
+              }`}
+            >
+              <div className="flex flex-col items-center text-center gap-3">
+                <div
+                  className={`text-5xl ${!badge.unlocked && "grayscale blur-sm"}`}
+                >
+                  {badge.image}
+                </div>
+
+                <div className="space-y-1">
+                  <h3 className="text-gray-900">{badge.name}</h3>
+                  <p className="text-xs text-gray-600 line-clamp-2">
+                    {badge.description}
+                  </p>
+                </div>
+
+                {badge.unlocked && badge.unlockedAt && (
+                  <div className="flex items-center gap-1 text-xs text-[#2A9D8F]">
+                    <Calendar className="w-3 h-3" />
+                    <span>{badge.unlockedAt}</span>
+                  </div>
+                )}
+
+                {!badge.unlocked && (
+                  <div className="absolute top-3 right-3">
+                    <Lock className="w-4 h-4 text-gray-400" />
+                  </div>
+                )}
+              </div>
+            </motion.button>
+>>>>>>> origin/main
           ))}
         </div>
       </div>
@@ -135,7 +176,9 @@ export function Badges() {
             className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl"
           >
             <div className="flex flex-col items-center text-center gap-4">
-              <div className={`text-7xl ${!selectedBadge.unlocked && 'grayscale blur-sm'}`}>
+              <div
+                className={`text-7xl ${!selectedBadge.unlocked && "grayscale blur-sm"}`}
+              >
                 {selectedBadge.image}
               </div>
 
@@ -146,7 +189,9 @@ export function Badges() {
                 <div className="w-full space-y-3">
                   <div className="flex items-center justify-center gap-2 text-[#2A9D8F]">
                     <Calendar className="w-4 h-4" />
-                    <span className="text-sm">Conquistada em {selectedBadge.unlockedAt}</span>
+                    <span className="text-sm">
+                      Conquistada em {selectedBadge.unlockedAt}
+                    </span>
                   </div>
                   {selectedBadge.locationId && (
                     <button
@@ -164,7 +209,9 @@ export function Badges() {
                 <div className="w-full p-4 bg-gray-100 rounded-xl">
                   <div className="flex items-center justify-center gap-2 text-gray-600">
                     <Lock className="w-4 h-4" />
-                    <span className="text-sm">Continue explorando para desbloquear</span>
+                    <span className="text-sm">
+                      Continue explorando para desbloquear
+                    </span>
                   </div>
                 </div>
               )}
