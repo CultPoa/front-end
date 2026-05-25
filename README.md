@@ -2,11 +2,17 @@
 
 Um aplicativo web/mobile responsivo para explorar locais culturais, eventos e experiências gamificadas na cidade de Porto Alegre.
 
+Para iniciar o frontend acessível pelo celular:
+
+```bash
+npm run dev -- --host
+```
+
 ## 🎯 Funcionalidades
 
 ### ✅ Implementadas
 
-- **🗺️ Mapa Interativo Leaflet**: 
+- **🗺️ Mapa Interativo Leaflet**:
   - Visualização de pontos culturais com filtros por categoria
   - Clustering inteligente de marcadores
   - Geolocalização em tempo real
@@ -64,11 +70,9 @@ src/
 ### Paleta de Cores
 
 ```css
---primary: #E63946      /* Vermelho vibrante - Museus */
---secondary: #F4A261    /* Laranja - Monumentos */
---accent: #2A9D8F       /* Verde-água - Arte */
---event: #E76F51        /* Coral - Eventos */
---background: #FAFAFA   /* Fundo */
+--primary: #e63946 /* Vermelho vibrante - Museus */ --secondary: #f4a261
+  /* Laranja - Monumentos */ --accent: #2a9d8f /* Verde-água - Arte */
+  --event: #e76f51 /* Coral - Eventos */ --background: #fafafa /* Fundo */;
 ```
 
 ### Componentes Reutilizáveis
@@ -109,6 +113,7 @@ interface Place {
 ```
 
 Ver documentação completa em:
+
 - [API_INTEGRATION.md](./API_INTEGRATION.md) - Integração com API REST
 - [LEAFLET_INTEGRATION.md](./LEAFLET_INTEGRATION.md) - Mapa Leaflet
 
@@ -160,6 +165,7 @@ O aplicativo é **mobile-first** e totalmente responsivo:
 ### Registro de Visitas
 
 Cada visita registrada:
+
 - Atualiza estatísticas do usuário
 - Desbloqueia insígnias
 - Permite deixar mensagens secretas

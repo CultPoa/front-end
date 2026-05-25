@@ -35,67 +35,89 @@ export function Share() {
       setCopied(false);
     }, 2000);
   };
-
   const generateStoryImage = async () => {
     if (!preview) return null;
 
-    return new Promise<Blob | null>((resolve) => {
+    try {
+      const response = await fetch(preview);
+      const imageBlob = await response.blob();
+
+      const bitmap = await createImageBitmap(imageBlob);
+
+      const MAX_WIDTH = 1080;
+      const MAX_HEIGHT = 1920;
+
+      let width = bitmap.width;
+      let height = bitmap.height;
+
+      const scale = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height, 1);
+
+      width = Math.floor(width * scale);
+      height = Math.floor(height * scale);
+
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
       if (!ctx) {
-        resolve(null);
-        return;
+        bitmap.close();
+        return null;
       }
 
-      const img = new Image();
+      canvas.width = width;
+      canvas.height = height;
 
-      img.crossOrigin = "anonymous";
+      ctx.drawImage(bitmap, 0, 0, width, height);
 
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
+      const gradientHeight = canvas.height * 0.28;
 
-        ctx.drawImage(img, 0, 0);
+      const gradient = ctx.createLinearGradient(
+        0,
+        canvas.height - gradientHeight,
+        0,
+        canvas.height,
+      );
 
-        const gradientHeight = canvas.height * 0.28;
+      gradient.addColorStop(0, "transparent");
+      gradient.addColorStop(1, "rgba(0,0,0,0.72)");
 
-        const gradient = ctx.createLinearGradient(
-          0,
-          canvas.height - gradientHeight,
-          0,
-          canvas.height,
+      ctx.fillStyle = gradient;
+
+      ctx.fillRect(
+        0,
+        canvas.height - gradientHeight,
+        canvas.width,
+        gradientHeight,
+      );
+
+      ctx.fillStyle = "#FFFFFF";
+
+      ctx.font = "bold 64px sans-serif";
+
+      ctx.fillText("#cultpoa", 180, canvas.height - 120);
+
+      ctx.font = "32px sans-serif";
+
+      ctx.fillText("📍 Porto Alegre", 180, canvas.height - 60);
+
+      const finalBlob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob(
+          (blob) => {
+            resolve(blob);
+          },
+          "image/jpeg",
+          0.9,
         );
+      });
 
-        gradient.addColorStop(0, "transparent");
-        gradient.addColorStop(1, "rgba(0,0,0,0.72)");
+      bitmap.close();
 
-        ctx.fillStyle = gradient;
+      canvas.width = 0;
+      canvas.height = 0;
 
-        ctx.fillRect(
-          0,
-          canvas.height - gradientHeight,
-          canvas.width,
-          gradientHeight,
-        );
-
-        ctx.fillStyle = "#FFFFFF";
-
-        ctx.font = "bold 64px sans-serif";
-
-        ctx.fillText("#cultpoa", 60, canvas.height - 120);
-
-        ctx.font = "36px sans-serif";
-
-        ctx.fillText("📍 Porto Alegre", 60, canvas.height - 60);
-
-        canvas.toBlob((blob) => {
-          resolve(blob);
-        }, "image/jpeg");
-      };
-
-      img.src = preview;
-    });
+      return finalBlob;
+    } catch {
+      return null;
+    }
   };
 
   const handleShareInstagram = async () => {
