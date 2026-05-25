@@ -17,9 +17,16 @@ import { isUserNearPlace } from "../utils/geo";
 
 const DEFAULT_CENTER: [number, number] = [-30.033, -51.222];
 const MAP_STATE_KEY = "cultpoa-map-state";
+const MAP_FILTER_KEY = "cultpoa-map-filter";
 
 export function MapView() {
-  const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [selectedFilter, setSelectedFilter] = useState<string>(() => {
+    try {
+      return localStorage.getItem(MAP_FILTER_KEY) || "all";
+    } catch {
+      return "all";
+    }
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [culturalPoints, setCulturalPoints] = useState<CulturalPoint[]>([]);
   const [followUser, setFollowUser] = useState(false);
@@ -43,10 +50,13 @@ export function MapView() {
     if (typeof window !== "undefined") {
       setMapReady(true);
 
-      // Import CSS do Leaflet
       import("leaflet/dist/leaflet.css");
     }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(MAP_FILTER_KEY, selectedFilter);
+  }, [selectedFilter]);
 
   useEffect(() => {
     const fetchPlaces = async () => {
