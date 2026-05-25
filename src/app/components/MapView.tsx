@@ -99,7 +99,6 @@ export function MapView() {
     { id: "all", label: "Todos", icon: MapPin },
     { id: "museum", label: "Museus", icon: Building2 },
     { id: "monument", label: "Monumentos", icon: Landmark },
-    { id: "event", label: "Eventos", icon: Calendar },
     { id: "artwork", label: "Espaços Artísticos", icon: Palette },
   ];
 
