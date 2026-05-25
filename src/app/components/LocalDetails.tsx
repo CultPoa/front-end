@@ -142,7 +142,7 @@ export function LocalDetails() {
             {handleLocalType(local.type)}
           </p>
 
-          <h1 className="text-3xl font-bold text-white leading-tight">
+          <h1 className="text-2xl font-bold text-white leading-tight">
             {local.name}
           </h1>
         </div>
@@ -163,8 +163,8 @@ export function LocalDetails() {
       </div>
       <div className="relative z-10 -mt-6 bg-[#FAFAFA] rounded-t-[32px] px-6 py-8 pb-32">
         <div className="space-y-8">
-          <div className="overflow-x-auto no-scrollbar -mx-6 px-6">
-            <div className="flex gap-3 min-w-max">
+          <div className="overflow-x-auto no-scrollbar w-full">
+            <div className="flex gap-3 w-max pr-6">
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
                   `${local.lat},${local.lon}`,
@@ -222,7 +222,7 @@ export function LocalDetails() {
     </div> */}
         </div>
       </div>
-      <div className="overflow-x-auto no-scrollbar -mx-6 px-6">
+      <div className="overflow-x-auto no-scrollbar px-6">
         <div className="flex gap-3 min-w-max">
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
