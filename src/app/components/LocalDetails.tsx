@@ -222,45 +222,6 @@ export function LocalDetails() {
     </div> */}
         </div>
       </div>
-      <div className="overflow-x-auto no-scrollbar px-6">
-        <div className="flex gap-3 min-w-max">
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-              `${local.lat},${local.lon}`,
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <Map className="w-4 h-4" />
-            Abrir no Maps
-          </a>
-
-          {local.website && (
-            <a
-              href={local.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" />
-              Website
-            </a>
-          )}
-
-          {local.wikipedia && (
-            <a
-              href={`https://wikipedia.org/wiki/${local.wikipedia}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              <Info className="w-4 h-4" />
-              Wikipedia
-            </a>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
