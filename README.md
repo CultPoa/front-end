@@ -8,6 +8,12 @@ Para iniciar o frontend acessível pelo celular:
 npm run dev -- --host
 ```
 
+e definir em `.env` com o ip do seu computador rodando o backend:
+
+```
+VITE_API_URL=http://192.168.x.y:8000/api
+```
+
 ## 🎯 Funcionalidades
 
 ### ✅ Implementadas

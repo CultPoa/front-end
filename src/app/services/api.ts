@@ -1,6 +1,9 @@
 import { Place, CulturalPoint, typeColors } from "../types/place";
 
-export const API_BASE_URL = "http://192.168.18.74:8000/api";
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL ?? "http://localhost:8000/api";
+
+console.log(API_BASE_URL);
 
 let placesCache: CulturalPoint[] | null = null;
 
