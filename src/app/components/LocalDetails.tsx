@@ -161,18 +161,17 @@ export function LocalDetails() {
           <Share2 className="w-5 h-5 text-gray-700" />
         </button>
       </div>
-
       <div className="relative z-10 -mt-6 bg-[#FAFAFA] rounded-t-[32px] px-6 py-8 pb-32">
         <div className="space-y-8">
-          {
-            <div className="flex flex-wrap gap-3">
+          <div className="overflow-x-auto no-scrollbar -mx-6 px-6">
+            <div className="flex gap-3 min-w-max">
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
                   `${local.lat},${local.lon}`,
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                className="shrink-0 h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <Map className="w-4 h-4" />
                 Abrir no Maps
@@ -183,7 +182,7 @@ export function LocalDetails() {
                   href={local.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="shrink-0 h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
                   Website
@@ -195,14 +194,14 @@ export function LocalDetails() {
                   href={`https://wikipedia.org/wiki/${local.wikipedia}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="shrink-0 h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   <Info className="w-4 h-4" />
                   Wikipedia
                 </a>
               )}
             </div>
-          }
+          </div>
 
           {local.description && (
             <div>
@@ -217,10 +216,49 @@ export function LocalDetails() {
           )}
 
           {/* <div className="flex items-center gap-2 text-sm text-gray-500">
-            <BadgeCheck className="w-4 h-4" />
+      <BadgeCheck className="w-4 h-4" />
 
-            <span>Conteúdo verificado por curadores.</span>
-          </div> */}
+      <span>Conteúdo verificado por curadores.</span>
+    </div> */}
+        </div>
+      </div>
+      <div className="overflow-x-auto no-scrollbar -mx-6 px-6">
+        <div className="flex gap-3 min-w-max">
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              `${local.lat},${local.lon}`,
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            <Map className="w-4 h-4" />
+            Abrir no Maps
+          </a>
+
+          {local.website && (
+            <a
+              href={local.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Website
+            </a>
+          )}
+
+          {local.wikipedia && (
+            <a
+              href={`https://wikipedia.org/wiki/${local.wikipedia}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <Info className="w-4 h-4" />
+              Wikipedia
+            </a>
+          )}
         </div>
       </div>
     </div>
