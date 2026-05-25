@@ -14,6 +14,16 @@ e definir em `.env` com o ip do seu computador rodando o backend:
 VITE_API_URL=http://192.168.x.y:8000/api
 ```
 
+Para acessar o frontend pelo celular: (precisa de conta no ngrok e um auth_token)
+
+```bash
+docker run --net=host -it -e NGROK_AUTHTOKEN="token" ngrok/ngrok:latest http 5173
+```
+
+e acesse o endereço do ngrok no celular.
+
+---
+
 ## 🎯 Funcionalidades
 
 ### ✅ Implementadas
