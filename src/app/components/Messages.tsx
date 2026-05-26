@@ -148,7 +148,7 @@ export function Messages() {
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-24">
       <div className="sticky top-0 bg-white shadow-sm z-10 p-4">
-        <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl'>
+        <h1 className='font-["Dongle"] text-[#E63946] font-bold text-4xl'>
           Mensagens Secretas
         </h1>
         <p className="text-sm text-gray-600">Deixe sua marca nos locais</p>
@@ -238,9 +238,6 @@ export function Messages() {
                     className="space-y-4 overflow-hidden"
                   >
                     <div>
-                      <label className="block text-sm text-gray-700 mb-2">
-                        Sua mensagem
-                      </label>
                       <textarea
                         value={messageText}
                         onChange={(e) =>
@@ -359,9 +356,6 @@ export function Messages() {
                     })}
                   </p>
                 </div>
-                <span className="px-3 py-1 bg-[#2A9D8F]/10 text-[#2A9D8F] text-xs rounded-full">
-                  Sua mensagem
-                </span>
               </div>
 
               <p className="text-gray-700 leading-relaxed">{message.text}</p>
@@ -370,7 +364,7 @@ export function Messages() {
                 onClick={() => navigate(`/local/${message.locationId}`)}
                 className="mt-4 text-sm text-[#E63946] hover:underline"
               >
-                Ver local →
+                Ver local
               </button>
             </motion.div>
           ))}

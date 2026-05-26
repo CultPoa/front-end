@@ -135,8 +135,8 @@ export function MapView() {
   return (
     <div className="relative w-full h-screen">
       <div className="absolute top-0 left-0 right-0 z-[1000] bg-white/95 backdrop-blur-sm shadow-md p-4">
-        <div className="flex items-center justify-center mb-1">
-          <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl'>
+        <div className="flex items-center justify-center">
+          <h1 className='font-["Dongle"] text-[#E63946] font-bold text-4xl'>
             Cultpoa
           </h1>
           <div className="flex-1" />

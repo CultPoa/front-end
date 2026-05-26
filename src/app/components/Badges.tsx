@@ -78,7 +78,7 @@ export function Badges() {
       <div className="sticky top-0 bg-white shadow-sm z-10">
         <div className="flex items-center gap-4 p-4">
           <div className="flex-1">
-            <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl'>
+            <h1 className='font-["Dongle"] text-[#E63946] font-bold text-4xl'>
               Minhas Insígnias
             </h1>
             <p className="text-sm text-gray-600">

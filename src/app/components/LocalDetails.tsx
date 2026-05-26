@@ -12,6 +12,7 @@ import {
   ChevronRight,
   ExternalLink,
   Map,
+  Search,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
@@ -90,8 +91,42 @@ export function LocalDetails() {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  function handleGoogleSearch(): string {
+    if (!local) {
+      return "";
+    }
+
+    const handledType = handleLocalType(local.type);
+    const nameLower = local.name.toLowerCase();
+
+    const nameContainsType = nameLower.includes(handledType.toLowerCase());
+
+    const typeAndName = nameContainsType
+      ? local.name
+      : `${handledType} ${local.name}`;
+
+    const hasPortoAlegre = typeAndName.toLowerCase().includes("porto alegre");
+
+    return hasPortoAlegre ? typeAndName : `${typeAndName} Porto Alegre`;
+  }
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
+      <div className="fixed top-4 left-0 right-0 z-50 flex justify-between px-4 pointer-events-none">
+        <button
+          onClick={() => navigate(-1)}
+          className="pointer-events-auto w-10 h-10 bg-white/70 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
+        >
+          <ArrowLeft className="w-5 h-5 text-gray-700" />
+        </button>
+
+        <button
+          onClick={() => toast.info("Recurso de compartilhamento em breve!")}
+          className="pointer-events-auto w-10 h-10 bg-white/70 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
+        >
+          <Share2 className="w-5 h-5 text-gray-700" />
+        </button>
+      </div>
+
       <div className="relative h-[42vh] overflow-hidden bg-gray-100">
         {images.length === 0 ? (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-100">
@@ -146,21 +181,8 @@ export function LocalDetails() {
             {local.name}
           </h1>
         </div>
-
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-700" />
-        </button>
-
-        <button
-          onClick={() => toast.info("Recurso de compartilhamento em breve!")}
-          className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
-        >
-          <Share2 className="w-5 h-5 text-gray-700" />
-        </button>
       </div>
+
       <div className="relative z-10 -mt-6 bg-[#FAFAFA] rounded-t-[32px] px-6 py-8 pb-32">
         <div className="space-y-8">
           <div className="overflow-x-auto no-scrollbar w-full">
@@ -200,6 +222,18 @@ export function LocalDetails() {
                   Wikipedia
                 </a>
               )}
+
+              <a
+                href={`https://www.google.com/search?q=${encodeURIComponent(
+                  handleGoogleSearch(),
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                <Search className="w-4 h-4" />
+                Pesquisar
+              </a>
             </div>
           </div>
 
@@ -214,12 +248,6 @@ export function LocalDetails() {
               </p>
             </div>
           )}
-
-          {/* <div className="flex items-center gap-2 text-sm text-gray-500">
-      <BadgeCheck className="w-4 h-4" />
-
-      <span>Conteúdo verificado por curadores.</span>
-    </div> */}
         </div>
       </div>
     </div>
