@@ -1,11 +1,11 @@
-const BASE_URL = "http://localhost:8000/api";
+import { API_BASE_URL } from "./api";
 
 const getAuthToken = () => {
   return localStorage.getItem("auth");
 };
 
 export async function sendSecretMessage(placeId: string, content: string) {
-  const res = await fetch(`${BASE_URL}/secret-message`, {
+  const res = await fetch(`${API_BASE_URL}/secret-message`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,7 +22,7 @@ export async function sendSecretMessage(placeId: string, content: string) {
 }
 
 export async function fetchNewestMessage(placeId: string) {
-  const res = await fetch(`${BASE_URL}/secret-message/newest`, {
+  const res = await fetch(`${API_BASE_URL}/secret-message/newest`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

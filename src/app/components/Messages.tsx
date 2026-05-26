@@ -161,7 +161,7 @@ export function Messages() {
 
       const data = await fetchNewestMessage(nearbyPlace.id);
 
-      setNewestMessage(data.content ?? "Nenhuma mensagem encontrada.");
+      setNewestMessage(data?.content ?? "Nenhuma mensagem encontrada.");
     } catch (error: any) {
       if (error?.status === 401) {
         localStorage.removeItem("auth");
