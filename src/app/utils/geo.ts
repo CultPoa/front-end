@@ -1,7 +1,7 @@
 // src/utils/geo.ts
 
 const EARTH_RADIUS_METERS = 6371e3;
-const DEFAULT_NEARBY_THRESHOLD_METERS = 100;
+const DEFAULT_NEARBY_THRESHOLD_METERS = 30000;
 
 /**
  * Calcula a distância em metros entre duas coordenadas geográficas

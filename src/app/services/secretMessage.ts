@@ -20,6 +20,7 @@ export async function sendSecretMessage(placeId: string, content: string) {
 
   return res.json();
 }
+
 export async function fetchNewestMessage(placeId: string) {
   const res = await fetch(`${BASE_URL}/secret-message/newest`, {
     method: "POST",
@@ -30,7 +31,13 @@ export async function fetchNewestMessage(placeId: string) {
     body: JSON.stringify({ place_id: placeId }),
   });
 
-  if (!res.ok) throw new Error("Erro ao buscar mensagem");
+  if (!res.ok) {
+    const error = new Error("Request failed");
+
+    (error as any).status = res.status;
+
+    throw error;
+  }
 
   const data = await res.json();
 

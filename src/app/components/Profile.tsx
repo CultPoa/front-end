@@ -139,6 +139,7 @@ function useAuth() {
   const logout = () => {
     sessionStorage.removeItem("cultpoa_token");
     sessionStorage.removeItem("cultpoa_user");
+    localStorage.removeItem("auth");
     setToken(null);
     setUser(null);
   };
