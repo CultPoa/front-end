@@ -18,7 +18,7 @@ import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Place } from "../types/place";
 
-const handleLocalType = (local: string): string => {
+export const handleLocalType = (local: string): string => {
   const types_names: Record<string, string> = {
     artwork: "Obra de Arte",
     museum: "Museu",

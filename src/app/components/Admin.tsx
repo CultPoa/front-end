@@ -1,14 +1,23 @@
-import { useState } from 'react';
-import { ArrowLeft, Plus, Edit, CheckCircle, Clock, Eye, AlertCircle, History } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { toast } from 'sonner';
+import { useState } from "react";
+import {
+  ArrowLeft,
+  Plus,
+  Edit,
+  CheckCircle,
+  Clock,
+  Eye,
+  AlertCircle,
+  History,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
+import { toast } from "sonner";
 
 interface Content {
   id: string;
   title: string;
-  type: 'local' | 'event';
-  status: 'pending' | 'approved' | 'rejected';
+  type: "local" | "event";
+  status: "pending" | "approved" | "rejected";
   author: string;
   date: string;
   version: number;
@@ -16,38 +25,40 @@ interface Content {
 
 const pendingContent: Content[] = [
   {
-    id: '1',
-    title: 'Novo evento: Workshop de Fotografia',
-    type: 'event',
-    status: 'pending',
-    author: 'Usuário da comunidade',
-    date: '22 de Abril, 2026',
+    id: "1",
+    title: "Novo evento: Workshop de Fotografia",
+    type: "event",
+    status: "pending",
+    author: "Usuário da comunidade",
+    date: "22 de Abril, 2026",
     version: 1,
   },
   {
-    id: '2',
-    title: 'Atualização: MARGS - Nova exposição',
-    type: 'local',
-    status: 'pending',
-    author: 'Curador',
-    date: '21 de Abril, 2026',
+    id: "2",
+    title: "Atualização: MARGS - Nova exposição",
+    type: "local",
+    status: "pending",
+    author: "Curador",
+    date: "21 de Abril, 2026",
     version: 2,
   },
 ];
 
 export function Admin() {
   const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState<'pending' | 'approved'>('pending');
+  const [selectedTab, setSelectedTab] = useState<"pending" | "approved">(
+    "pending",
+  );
 
   const handleApprove = (id: string) => {
-    toast.success('Conteúdo aprovado!', {
-      description: 'O conteúdo agora está visível para todos os usuários.',
+    toast.success("Conteúdo aprovado!", {
+      description: "O conteúdo agora está visível para todos os usuários.",
     });
   };
 
   const handleReject = (id: string) => {
-    toast.error('Conteúdo rejeitado', {
-      description: 'O autor será notificado sobre a rejeição.',
+    toast.error("Conteúdo rejeitado", {
+      description: "O autor será notificado sobre a rejeição.",
     });
   };
 
@@ -69,11 +80,11 @@ export function Admin() {
 
         <div className="flex gap-2">
           <button
-            onClick={() => setSelectedTab('pending')}
+            onClick={() => setSelectedTab("pending")}
             className={`flex-1 py-3 rounded-xl transition-all ${
-              selectedTab === 'pending'
-                ? 'bg-white text-[#264653]'
-                : 'bg-white/10 text-white hover:bg-white/20'
+              selectedTab === "pending"
+                ? "bg-white text-[#264653]"
+                : "bg-white/10 text-white hover:bg-white/20"
             }`}
           >
             <div className="flex items-center justify-center gap-2">
@@ -82,11 +93,11 @@ export function Admin() {
             </div>
           </button>
           <button
-            onClick={() => setSelectedTab('approved')}
+            onClick={() => setSelectedTab("approved")}
             className={`flex-1 py-3 rounded-xl transition-all ${
-              selectedTab === 'approved'
-                ? 'bg-white text-[#264653]'
-                : 'bg-white/10 text-white hover:bg-white/20'
+              selectedTab === "approved"
+                ? "bg-white text-[#264653]"
+                : "bg-white/10 text-white hover:bg-white/20"
             }`}
           >
             <div className="flex items-center justify-center gap-2">
@@ -106,7 +117,7 @@ export function Admin() {
           <span>Criar novo conteúdo</span>
         </motion.button>
 
-        {selectedTab === 'pending' ? (
+        {selectedTab === "pending" ? (
           <div className="space-y-4">
             {pendingContent.map((content, index) => (
               <motion.div
@@ -131,7 +142,7 @@ export function Admin() {
                     </p>
                   </div>
                   <span className="px-3 py-1 bg-[#F4A261]/10 text-[#F4A261] text-xs rounded-full">
-                    {content.type === 'local' ? 'Local' : 'Evento'}
+                    {content.type === "local" ? "Local" : "Evento"}
                   </span>
                 </div>
 
@@ -190,7 +201,9 @@ export function Admin() {
                   <CheckCircle className="w-8 h-8 text-gray-400" />
                 </div>
                 <h3 className="text-gray-900 mb-2">Tudo em dia!</h3>
-                <p className="text-gray-600">Não há conteúdos pendentes para revisar.</p>
+                <p className="text-gray-600">
+                  Não há conteúdos pendentes para revisar.
+                </p>
               </div>
             )}
           </div>
@@ -201,7 +214,8 @@ export function Admin() {
             </div>
             <h3 className="text-gray-900 mb-2">Conteúdos aprovados</h3>
             <p className="text-gray-600">
-              Todos os conteúdos aprovados estão visíveis no aplicativo com o selo de curadoria.
+              Todos os conteúdos aprovados estão visíveis no aplicativo com o
+              selo de curadoria.
             </p>
           </div>
         )}
@@ -235,7 +249,8 @@ export function Admin() {
               <div className="text-sm text-gray-700">
                 <p className="mb-1">Controle de permissões ativo</p>
                 <p className="text-xs text-gray-600">
-                  Você tem acesso total como administrador. Curadores podem aprovar conteúdos, mas não gerenciar usuários.
+                  Você tem acesso total como administrador. Curadores podem
+                  aprovar conteúdos, mas não gerenciar usuários.
                 </p>
               </div>
             </div>

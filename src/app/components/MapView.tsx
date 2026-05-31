@@ -8,12 +8,15 @@ import {
   Filter,
   Loader,
   TypeIcon,
+  Search,
+  X,
 } from "lucide-react";
 import { CulturalPoint, typeIcons } from "../types/place";
 import { renderToString } from "react-dom/server";
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { isUserNearPlace } from "../utils/geo";
+import { handleLocalType } from "./LocalDetails";
 
 const DEFAULT_CENTER: [number, number] = [-30.033, -51.222];
 const MAP_STATE_KEY = "cultpoa-map-state";
@@ -37,6 +40,8 @@ export function MapView() {
   } | null>(null);
   const [nearbyPlace, setNearbyPlace] = useState<CulturalPoint | null>(null);
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
 
   const savedMapState = (() => {
     try {
@@ -109,7 +114,7 @@ export function MapView() {
     { id: "all", label: "Todos", icon: MapPin },
     { id: "museum", label: "Museus", icon: Building2 },
     { id: "monument", label: "Monumentos", icon: Landmark },
-    { id: "artwork", label: "Espaços Artísticos", icon: Palette },
+    { id: "artwork", label: "Arte", icon: Palette },
   ];
 
   const filteredPoints =
@@ -132,15 +137,95 @@ export function MapView() {
     );
   }
 
+  const normalizeText = (text: string) =>
+    text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
+  const searchResults = culturalPoints.filter((place) =>
+    normalizeText(place.name).includes(normalizeText(searchTerm)),
+  );
+
   return (
     <div className="relative w-full h-screen">
       <div className="absolute top-0 left-0 right-0 z-[1000] bg-white/95 backdrop-blur-sm shadow-md p-4">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center">
           <h1 className='font-["Dongle"] text-[#E63946] font-bold text-4xl'>
             Cultpoa
           </h1>
+
           <div className="flex-1" />
+
+          <button
+            onClick={() => setShowSearch((v) => !v)}
+            className="p-2 rounded-full hover:bg-gray-100"
+          >
+            <Search className="w-5 h-5" />
+          </button>
         </div>
+
+        {showSearch && (
+          <div className="mt-3">
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+
+              <input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar local cultural..."
+                className="w-full pl-10 pr-10 py-2 border rounded-xl bg-white"
+              />
+
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                >
+                  <X className="w-4 h-4 text-gray-500" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {searchTerm.trim() && (
+          <div className="absolute top-32 left-4 right-4 z-[1200] max-h-[60vh] overflow-y-auto bg-white rounded-xl shadow-xl">
+            {searchResults.length === 0 ? (
+              <div className="p-4 text-gray-500">Nenhum local encontrado.</div>
+            ) : (
+              searchResults.map((place) => (
+                <button
+                  key={place.id}
+                  onClick={() => navigate(`/local/${place.id}`)}
+                  className="w-full p-4 border-b last:border-b-0 text-left hover:bg-gray-50"
+                >
+                  <div className="flex gap-3">
+                    {place.image && (
+                      <img
+                        src={place.image}
+                        alt={place.name}
+                        className="w-16 h-16 rounded-lg object-cover"
+                      />
+                    )}
+
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold truncate">{place.name}</h3>
+
+                      <p className="text-sm text-gray-500 line-clamp-2">
+                        {place.description}
+                      </p>
+
+                      <div className="flex items-center gap-2 mt-2 text-xs text-gray-400">
+                        <span>{handleLocalType(place.type)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+        )}
 
         <div className="flex gap-2 overflow-x-auto scrollbar-hide">
           {filters.map((filter) => {

@@ -117,13 +117,6 @@ export function Events() {
           <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl leading-none'>
             Eventos
           </h1>
-
-          <button
-            onClick={() => setShowAddEvent(true)}
-            className="w-10 h-10 bg-[#2A9D8F] text-white rounded-full flex items-center justify-center shadow-sm active:scale-[0.96] transition-transform"
-          >
-            <Plus className="w-5 h-5" />
-          </button>
         </div>
       </div>
 
