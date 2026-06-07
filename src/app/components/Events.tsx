@@ -7,8 +7,11 @@ import {
   ExternalLink,
   Loader2,
   Bookmark,
+  Grid3X3,
+  List,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { CalendarView } from "./CalendarView";
 
 interface EventLocation {
   name: string;
@@ -84,6 +87,7 @@ export function Events() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddEvent, setShowAddEvent] = useState(false);
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -117,124 +121,154 @@ export function Events() {
           <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl leading-none'>
             Eventos
           </h1>
+          <div className="flex items-center gap-2 bg-gray-100 rounded-full p-1">
+            <button
+              onClick={() => setViewMode("list")}
+              className={`h-9 px-4 rounded-full flex items-center gap-2 transition-colors font-medium text-sm ${
+                viewMode === "list"
+                  ? "bg-white text-gray-800 shadow-sm"
+                  : "text-gray-600 hover:text-gray-800"
+              }`}
+            >
+              <List className="w-4 h-4" />
+              <span>Lista</span>
+            </button>
+            <button
+              onClick={() => setViewMode("calendar")}
+              className={`h-9 px-4 rounded-full flex items-center gap-2 transition-colors font-medium text-sm ${
+                viewMode === "calendar"
+                  ? "bg-white text-gray-800 shadow-sm"
+                  : "text-gray-600 hover:text-gray-800"
+              }`}
+            >
+              <Grid3X3 className="w-4 h-4" />
+              <span>Calendário</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="px-4 pt-4 space-y-8">
-        <a
-          href="https://www.sympla.com.br/eventos/porto-alegre-rs"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="relative overflow-hidden rounded-[32px] p-7 text-white block"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-[#2A9D8F] via-[#238276] to-[#1f6e64]" />
+        {viewMode === "list" ? (
+          <>
+            <a
+              href="https://www.sympla.com.br/eventos/porto-alegre-rs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative overflow-hidden rounded-[32px] p-7 text-white block"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#2A9D8F] via-[#238276] to-[#1f6e64]" />
 
-          <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
+              <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
 
-          <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-black/10 rounded-full blur-3xl" />
+              <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-black/10 rounded-full blur-3xl" />
 
-          <div className="relative z-10">
-            <h2 className="text-3xl font-bold leading-tight mb-3 max-w-xs">
-              Eventos em Porto Alegre
-            </h2>
+              <div className="relative z-10">
+                <h2 className="text-3xl font-bold leading-tight mb-3 max-w-xs">
+                  Eventos em Porto Alegre
+                </h2>
 
-            <p className="text-white/80 leading-relaxed mb-6 max-w-md">
-              Descubra shows, festas, exposições e experiências culturais na
-              cidade.
-            </p>
+                <p className="text-white/80 leading-relaxed mb-6 max-w-md">
+                  Descubra shows, festas, exposições e experiências culturais na
+                  cidade.
+                </p>
 
-            <div className="inline-flex items-center gap-2 h-11 px-5 rounded-full bg-white text-[#2A9D8F] font-medium">
-              Explorar eventos
-              <ExternalLink className="w-4 h-4" />
-            </div>
-          </div>
-        </a>
+                <div className="inline-flex items-center gap-2 h-11 px-5 rounded-full bg-white text-[#2A9D8F] font-medium">
+                  Explorar eventos
+                  <ExternalLink className="w-4 h-4" />
+                </div>
+              </div>
+            </a>
 
-        <section>
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <h2 className="font-['Dongle'] text-gray-700 font-bold text-5xl">
-                Bombando no momento
-              </h2>
+            <section>
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h2 className="font-['Dongle'] text-gray-700 font-bold text-5xl">
+                    Bombando no momento
+                  </h2>
 
-              <p className="text-m text-gray-500">
-                Os dez eventos mais populares da semana!
-              </p>
-            </div>
-          </div>
+                  <p className="text-m text-gray-500">
+                    Os dez eventos mais populares da semana!
+                  </p>
+                </div>
+              </div>
 
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-              <Loader2 className="w-8 h-8 animate-spin mb-3" />
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+                  <Loader2 className="w-8 h-8 animate-spin mb-3" />
 
-              <p>Buscando eventos em Porto Alegre...</p>
-            </div>
-          ) : (
-            <div className="space-y-5">
-              {events.map((event, index) => {
-                const { date, time } = parseStartDate(event.start_date);
-                const locationText = formatLocation(event.location);
+                  <p>Buscando eventos em Porto Alegre...</p>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  {events.map((event, index) => {
+                    const { date, time } = parseStartDate(event.start_date);
+                    const locationText = formatLocation(event.location);
 
-                return (
-                  <motion.div
-                    key={event.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.04 }}
-                    className="overflow-hidden rounded-[28px] bg-white border border-gray-200"
-                  >
-                    <div className="relative h-56 overflow-hidden bg-gray-100">
-                      <img
-                        src={event.images.lg || event.images.original}
-                        alt={event.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.opacity = "0";
-                        }}
-                      />
+                    return (
+                      <motion.div
+                        key={event.id}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.04 }}
+                        className="overflow-hidden rounded-[28px] bg-white border border-gray-200"
+                      >
+                        <div className="relative h-56 overflow-hidden bg-gray-100">
+                          <img
+                            src={event.images.lg || event.images.original}
+                            alt={event.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.opacity = "0";
+                            }}
+                          />
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                    </div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                        </div>
 
-                    <div className="p-5">
-                      <p className="text-sm text-gray-500 mb-2">
-                        {date} • {time}
-                      </p>
+                        <div className="p-5">
+                          <p className="text-sm text-gray-500 mb-2">
+                            {date} • {time}
+                          </p>
 
-                      <h2 className="text-xl font-semibold text-gray-800 leading-tight mb-4">
-                        {sanitizeEventName(event.name)}
-                      </h2>
+                          <h2 className="text-xl font-semibold text-gray-800 leading-tight mb-4">
+                            {sanitizeEventName(event.name)}
+                          </h2>
 
-                      <p className="text-sm text-gray-500 mb-5 leading-relaxed">
-                        {locationText}
-                      </p>
+                          <p className="text-sm text-gray-500 mb-5 leading-relaxed">
+                            {locationText}
+                          </p>
 
-                      <div className="flex gap-3">
-                        <a
-                          href={event.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 h-11 rounded-full bg-[#2A9D8F] text-white flex items-center justify-center text-sm font-medium active:scale-[0.98] transition-transform"
-                        >
-                          Acessar evento
-                        </a>
+                          <div className="flex gap-3">
+                            <a
+                              href={event.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-1 h-11 rounded-full bg-[#2A9D8F] text-white flex items-center justify-center text-sm font-medium active:scale-[0.98] transition-transform"
+                            >
+                              Acessar evento
+                            </a>
 
-                        <a
-                          href={buildGoogleCalendarUrl(event)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-gray-50 transition-colors"
-                        >
-                          <Bookmark className="w-4 h-4 text-gray-700" />
-                        </a>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          )}
-        </section>
+                            <a
+                              href={buildGoogleCalendarUrl(event)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-gray-50 transition-colors"
+                            >
+                              <Bookmark className="w-4 h-4 text-gray-700" />
+                            </a>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+          </>
+        ) : (
+          <CalendarView events={events} loading={loading} />
+        )}
       </div>
 
       {showAddEvent && (
