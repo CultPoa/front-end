@@ -21,6 +21,7 @@ import { handleLocalType } from "./LocalDetails";
 const DEFAULT_CENTER: [number, number] = [-30.033, -51.222];
 const MAP_STATE_KEY = "cultpoa-map-state";
 const MAP_FILTER_KEY = "cultpoa-map-filter";
+const CLICKED_MARKERS_KEY = "cultpoa-clicked-markers";
 
 export function MapView() {
   const [selectedFilter, setSelectedFilter] = useState<string>(() => {
@@ -296,8 +297,17 @@ function LeafletMap({
   initialCenter: [number, number];
   initialZoom: number;
   onMapMove: () => void;
+  onMarkerClick: (id: string) => void;
 }) {
   const [MapComponents, setMapComponents] = useState<any>(null);
+  const [clickedMarkers, setClickedMarkers] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem(CLICKED_MARKERS_KEY);
+      return new Set(saved ? JSON.parse(saved) : []);
+    } catch {
+      return new Set();
+    }
+  });
 
   useEffect(() => {
     const loadMap = async () => {
@@ -339,6 +349,20 @@ function LeafletMap({
         });
       };
 
+      const createPlaceIconClicked = (type) => {
+        const Icon = typeIcons[type] || MapPin;
+
+        const iconHtml = renderToString(React.createElement(Icon));
+
+        return new L.DivIcon({
+          html: iconHtml,
+          className:
+            "text-red-600 hover:bg-red-100 bg-red-50 rounded-full p-2 shadow",
+          iconSize: [40, 40],
+          iconAnchor: [20, 20],
+        });
+      };
+
       function ChangeView({
         center,
         follow,
@@ -373,6 +397,7 @@ function LeafletMap({
         MapEvents,
         userIcon,
         createPlaceIcon,
+        createPlaceIconClicked,
         PersistMapState,
       });
 
@@ -434,6 +459,7 @@ function LeafletMap({
     PersistMapState,
     userIcon,
     createPlaceIcon,
+    createPlaceIconClicked,
   } = MapComponents;
 
   const mapCenter =
@@ -495,9 +521,15 @@ function LeafletMap({
           <Marker
             key={place.id}
             position={[place.lat, place.lon]}
-            icon={createPlaceIcon(place.type)}
+            icon={clickedMarkers.has(place.id) ? createPlaceIconClicked(place.type) : createPlaceIcon(place.type)}
             eventHandlers={{
-              click: () => onMarkerClick(place.id),
+              click: () => {
+                const newClickedMarkers = new Set(clickedMarkers);
+                newClickedMarkers.add(place.id);
+                setClickedMarkers(newClickedMarkers);
+                localStorage.setItem(CLICKED_MARKERS_KEY, JSON.stringify([...newClickedMarkers]));
+                onMarkerClick(place.id);
+              },
             }}
           />
         ))}
