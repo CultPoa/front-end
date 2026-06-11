@@ -1,6 +1,13 @@
 import { MapPin, Building2, Landmark, Calendar, Palette, Filter, Loader } from 'lucide-react';
 
+export type PlaceType =
+  | "museum"
+  | "monument"
+  | "event"
+  | "art";
+
 export interface Place {
+  map(arg0: (place: any) => any): any;
   id: string;
   name: string;
   lat: number;

@@ -17,17 +17,17 @@ import {
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Place } from "../types/place";
+import { haversineDistance, isUserNearPlace } from "../utils/geo";
 
-export const handleLocalType = (local: string): string => {
-  const types_names: Record<string, string> = {
-    artwork: "Obra de Arte",
+export const handleLocalType = (type: string): string => {
+  const typesNames: Record<string, string> = {
     museum: "Museu",
     monument: "Monumento",
-    memorial: "Memorial",
-    attraction: "Atração",
+    event: "Evento",
+    art: "Arte",
   };
 
-  return types_names[local] ?? local.charAt(0).toUpperCase() + local.slice(1);
+  return typesNames[type] ?? type;
 };
 
 export function LocalDetails() {
@@ -36,6 +36,8 @@ export function LocalDetails() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [local, setLocal] = useState<Place | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isNear, setIsNear] = useState(false);
+  const [checkingLocation, setCheckingLocation] = useState(true);
 
   useEffect(() => {
     const fetchPlace = async () => {
@@ -56,6 +58,55 @@ export function LocalDetails() {
       fetchPlace();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (!local || !navigator.geolocation) {
+      setCheckingLocation(false);
+      return;
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const userPosition = {
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+        };
+
+        console.log("📍 Your GPS:", userPosition);
+        console.log("🏛️ Place GPS:", {
+          lat: local.lat,
+          lon: local.lon,
+          name: local.name,
+        });
+
+        const near = isUserNearPlace(userPosition, local);
+
+        const distance = haversineDistance(
+          userPosition.lat,
+          userPosition.lon,
+          local.lat,
+          local.lon
+        );
+
+        console.log("📏 Distance:", distance.toFixed(2), "meters");
+        console.log("🚶 Is near?", distance <= 100);
+
+        setIsNear(near);
+        setCheckingLocation(false);
+      },
+      (error) => {
+        console.error("Erro de localização:", error);
+        setCheckingLocation(false);
+      },
+      {
+        enableHighAccuracy: true,
+      }
+    );
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, [local]);
 
   const images = local?.image ? [local.image] : [];
 
@@ -185,6 +236,21 @@ export function LocalDetails() {
 
       <div className="relative z-10 -mt-6 bg-[#FAFAFA] rounded-t-[32px] px-6 py-8 pb-32">
         <div className="space-y-8">
+          {/* Temporary geolocation status */}
+          <div className="p-4 rounded-xl bg-white shadow-sm">
+            {checkingLocation ? (
+              <p>📍 Verificando sua localização...</p>
+            ) : isNear ? (
+              <p className="text-green-600">
+                ✅ Você está próximo deste local!
+              </p>
+            ) : (
+              <p className="text-red-600">
+                ❌ Você precisa se aproximar para fazer check-in.
+              </p>
+            )}
+          </div>
+
           <div className="overflow-x-auto no-scrollbar w-full">
             <div className="flex gap-3 w-max pr-6">
               <a
