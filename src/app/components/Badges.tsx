@@ -1,75 +1,21 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Award, Lock, MapPin, Calendar } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Lock } from "lucide-react";
 import { motion } from "motion/react";
+import { getProgress } from "../utils/progress";
+import { getBadges, Badge } from "../utils/badges";
 
-interface Badge {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  unlocked: boolean;
-  unlockedAt?: string;
-  locationId?: string;
-  color: string;
-}
-
-const badges: Badge[] = [
-  {
-    id: "1",
-    name: "Explorador Cultural",
-    description: "Visite seu primeiro local cultural",
-    image: "🎨",
-    unlocked: true,
-    unlockedAt: "20 de Abril, 2026",
-    locationId: "1",
-    color: "#E63946",
-  },
-  {
-    id: "2",
-    name: "Conhecedor de Museus",
-    description: "Visite 3 museus diferentes",
-    image: "🏛️",
-    unlocked: false,
-    color: "#F4A261",
-  },
-  {
-    id: "3",
-    name: "Guardião da História",
-    description: "Visite todos os monumentos históricos",
-    image: "🗿",
-    unlocked: false,
-    color: "#2A9D8F",
-  },
-  {
-    id: "4",
-    name: "Amante das Artes",
-    description: "Participe de 5 eventos culturais",
-    image: "🎭",
-    unlocked: false,
-    color: "#E76F51",
-  },
-  {
-    id: "5",
-    name: "Curador POA",
-    description: "Deixe mensagens em 10 locais diferentes",
-    image: "📝",
-    unlocked: false,
-    color: "#264653",
-  },
-  {
-    id: "6",
-    name: "Influencer Cultural",
-    description: "Compartilhe 20 fotos no Instagram",
-    image: "📸",
-    unlocked: false,
-    color: "#E63946",
-  },
-];
 
 export function Badges() {
-  const navigate = useNavigate();
+
+  const [badges, setBadges] = useState<Badge[]>([]);
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
+
+  useEffect(() => {
+    const progress = getProgress();
+    const userBadges = getBadges(progress);
+
+    setBadges(userBadges);
+  }, []);
 
   const unlockedCount = badges.filter((b) => b.unlocked).length;
 
@@ -118,22 +64,22 @@ export function Badges() {
                 <div
                   className={`text-5xl ${!badge.unlocked && "grayscale blur-sm"}`}
                 >
-                  {badge.image}
+                  {badge.name.split(" ")[0]}
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="text-gray-900">{badge.name}</h3>
-                  <p className="text-xs text-gray-600 line-clamp-2">
+                  <h3 className="text-gray-900">
+                    {badge.name.substring(2)}
+                  </h3>
+
+                  <p className="text-xs text-gray-600">
                     {badge.description}
                   </p>
-                </div>
 
-                {badge.unlocked && badge.unlockedAt && (
-                  <div className="flex items-center gap-1 text-xs text-[#2A9D8F]">
-                    <Calendar className="w-3 h-3" />
-                    <span>{badge.unlockedAt}</span>
-                  </div>
-                )}
+                  <p className="text-xs text-[#E63946] font-medium">
+                    {badge.progress}/{badge.goal}
+                  </p>
+                </div>
 
                 {!badge.unlocked && (
                   <div className="absolute top-3 right-3">
@@ -163,31 +109,21 @@ export function Badges() {
               <div
                 className={`text-7xl ${!selectedBadge.unlocked && "grayscale blur-sm"}`}
               >
-                {selectedBadge.image}
+                {selectedBadge.name.split(" ")[0]}
               </div>
 
-              <h2 className="text-gray-900">{selectedBadge.name}</h2>
+              <h2 className="text-gray-900">{selectedBadge.name.substring(2)}</h2>
               <p className="text-gray-600">{selectedBadge.description}</p>
 
+              <p className="text-sm font-medium text-[#E63946]">
+                Progresso: {selectedBadge.progress}/{selectedBadge.goal}
+              </p>
+
               {selectedBadge.unlocked ? (
-                <div className="w-full space-y-3">
-                  <div className="flex items-center justify-center gap-2 text-[#2A9D8F]">
-                    <Calendar className="w-4 h-4" />
-                    <span className="text-sm">
-                      Conquistada em {selectedBadge.unlockedAt}
-                    </span>
-                  </div>
-                  {selectedBadge.locationId && (
-                    <button
-                      onClick={() => {
-                        setSelectedBadge(null);
-                        navigate(`/local/${selectedBadge.locationId}`);
-                      }}
-                      className="w-full py-3 bg-[#E63946] text-white rounded-xl hover:bg-[#D62839] transition-colors"
-                    >
-                      Ver local
-                    </button>
-                  )}
+                <div className="w-full p-4 bg-green-100 rounded-xl">
+                  <p className="text-green-700 text-sm">
+                    🎉 Insígnia conquistada!
+                  </p>
                 </div>
               ) : (
                 <div className="w-full p-4 bg-gray-100 rounded-xl">

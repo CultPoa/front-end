@@ -18,6 +18,8 @@ import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Place } from "../types/place";
 import { haversineDistance, isUserNearPlace } from "../utils/geo";
+import { checkInPlace, getProgress } from "../utils/progress";
+import { getBadges } from "../utils/badges";
 
 export const handleLocalType = (type: string): string => {
   const typesNames: Record<string, string> = {
@@ -38,6 +40,10 @@ export function LocalDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [isNear, setIsNear] = useState(false);
   const [checkingLocation, setCheckingLocation] = useState(true);
+  const [badges, setBadges] = useState(() => {
+    const progress = getProgress();
+    return getBadges(progress);
+  });
 
   useEffect(() => {
     const fetchPlace = async () => {
@@ -89,7 +95,7 @@ export function LocalDetails() {
         );
 
         console.log("📏 Distance:", distance.toFixed(2), "meters");
-        console.log("🚶 Is near?", distance <= 100);
+        console.log("🚶 Is near?", near);
 
         setIsNear(near);
         setCheckingLocation(false);
@@ -159,6 +165,22 @@ export function LocalDetails() {
     const hasPortoAlegre = typeAndName.toLowerCase().includes("porto alegre");
 
     return hasPortoAlegre ? typeAndName : `${typeAndName} Porto Alegre`;
+  }
+  function handleCheckIn() {
+    if (!local) return;
+
+    if (!isNear) {
+      toast.error("❌ Você precisa se aproximar para fazer check-in.");
+      return;
+    }
+
+    const progress = checkInPlace(local);
+
+    setBadges(getBadges(progress));
+
+    console.log("🏆 Novo progresso:", progress);
+
+    toast.success("🏆 Check-in realizado com sucesso!");
   }
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
@@ -236,6 +258,18 @@ export function LocalDetails() {
 
       <div className="relative z-10 -mt-6 bg-[#FAFAFA] rounded-t-[32px] px-6 py-8 pb-32">
         <div className="space-y-8">
+          <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-300">
+            <h3 className="font-bold mb-2">
+              🏆 Badge Debug
+            </h3>
+
+            {badges.map((badge) => (
+              <div key={badge.id} className="text-sm mb-2">
+                {badge.unlocked ? "✅" : "🔒"}{" "}
+                {badge.name} ({badge.progress}/{badge.goal})
+              </div>
+            ))}
+          </div>
           {/* Temporary geolocation status */}
           <div className="p-4 rounded-xl bg-white shadow-sm">
             {checkingLocation ? (
@@ -250,6 +284,21 @@ export function LocalDetails() {
               </p>
             )}
           </div>
+
+          <button
+            onClick={handleCheckIn}
+            disabled={!isNear}
+            className={`
+              w-full py-3 rounded-xl font-semibold transition-colors
+              ${
+                isNear
+                  ? "bg-[#E63946] text-white"
+                  : "bg-gray-200 text-gray-500"
+              }
+            `}
+          >
+            🏆 Fazer Check-in
+          </button>
 
           <div className="overflow-x-auto no-scrollbar w-full">
             <div className="flex gap-3 w-max pr-6">
