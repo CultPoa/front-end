@@ -270,7 +270,7 @@ export function LocalDetails() {
 
       <div className="relative z-10 -mt-6 bg-[#FAFAFA] rounded-t-[32px] px-6 py-8 pb-32">
         <div className="space-y-8">
-          <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-300">
+          {/* <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-300">
             <h3 className="font-bold mb-2">
               🏆 Badge Debug
             </h3>
@@ -282,7 +282,7 @@ export function LocalDetails() {
               </div>
             ))}
           </div>
-          {/* Temporary geolocation status */}
+          Temporary geolocation status
           <div className="p-4 rounded-xl bg-white shadow-sm">
             {checkingLocation ? (
               <p>📍 Verificando sua localização...</p>
@@ -295,7 +295,7 @@ export function LocalDetails() {
                 ❌ Você precisa se aproximar para fazer check-in.
               </p>
             )}
-          </div>
+          </div> */}
 
           <button
             onClick={handleCheckIn}
