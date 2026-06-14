@@ -76,9 +76,15 @@ export function Badges() {
                     {badge.description}
                   </p>
 
-                  <p className="text-xs text-[#E63946] font-medium">
-                    {badge.progress}/{badge.goal}
-                  </p>
+                  {badge.unlocked ? (
+                    <p className="text-xs text-green-600 font-medium">
+                      🏆 Conquistada
+                    </p>
+                  ) : (
+                    <p className="text-xs text-[#E63946] font-medium">
+                      {badge.progress}/{badge.goal}
+                    </p>
+                  )}
                 </div>
 
                 {!badge.unlocked && (
@@ -115,9 +121,11 @@ export function Badges() {
               <h2 className="text-gray-900">{selectedBadge.name.substring(2)}</h2>
               <p className="text-gray-600">{selectedBadge.description}</p>
 
-              <p className="text-sm font-medium text-[#E63946]">
-                Progresso: {selectedBadge.progress}/{selectedBadge.goal}
-              </p>
+              {!selectedBadge.unlocked && (
+                <p className="text-xs text-[#E63946] font-medium">
+                  Progresso: {selectedBadge.progress}/{selectedBadge.goal}
+                </p>
+              )}
 
               {selectedBadge.unlocked ? (
                 <div className="w-full p-4 bg-green-100 rounded-xl">

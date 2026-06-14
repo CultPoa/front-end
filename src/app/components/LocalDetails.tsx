@@ -2,10 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
-  MapPin,
-  Clock,
   Info,
-  BadgeCheck,
   Camera,
   Share2,
   ChevronLeft,
@@ -18,7 +15,11 @@ import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Place } from "../types/place";
 import { haversineDistance, isUserNearPlace } from "../utils/geo";
-import { checkInPlace, getProgress } from "../utils/progress";
+import {
+  checkInPlace,
+  getProgress,
+  addPhotoShare
+} from "../utils/progress";
 import { getBadges } from "../utils/badges";
 
 export const handleLocalType = (type: string): string => {
@@ -41,7 +42,7 @@ export function LocalDetails() {
   const [isNear, setIsNear] = useState(false);
   const [checkingLocation, setCheckingLocation] = useState(true);
   const [badges, setBadges] = useState(() => {
-    const progress = getProgress();
+  const progress = getProgress();
     return getBadges(progress);
   });
 
@@ -182,6 +183,17 @@ export function LocalDetails() {
 
     toast.success("🏆 Check-in realizado com sucesso!");
   }
+  function handlePhotoShare() {
+    const progress = addPhotoShare();
+
+    setBadges(getBadges(progress));
+
+    console.log("📸 Foto compartilhada:", progress);
+
+    toast.success(
+      `📸 Foto compartilhada! ${progress.photosShared}/20`
+    );
+  }
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <div className="fixed top-4 left-0 right-0 z-50 flex justify-between px-4 pointer-events-none">
@@ -193,7 +205,7 @@ export function LocalDetails() {
         </button>
 
         <button
-          onClick={() => toast.info("Recurso de compartilhamento em breve!")}
+          onClick={handlePhotoShare}
           className="pointer-events-auto w-10 h-10 bg-white/70 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
         >
           <Share2 className="w-5 h-5 text-gray-700" />

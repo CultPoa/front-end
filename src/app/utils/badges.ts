@@ -31,8 +31,8 @@ export function getBadges(progress: UserProgress): Badge[] {
       id: "art",
       name: "🎨 Amante das Artes",
       description: "Participe de 3 eventos culturais",
-      unlocked: progress.eventsAttended >= 3,
-      progress: progress.eventsAttended,
+      unlocked: progress.eventsAttended.length >= 3,
+      progress: progress.eventsAttended.length,
       goal: 3,
     },
     {

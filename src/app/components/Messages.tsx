@@ -17,6 +17,7 @@ import {
   sendSecretMessage,
   fetchNewestMessage,
 } from "../services/secretMessage";
+import { addSecretMessage } from "../utils/progress";
 
 interface Message {
   id: string;
@@ -91,7 +92,7 @@ export function Messages() {
     }
 
     const nearby = culturalPoints.find((place) =>
-      isUserNearPlace(userPosition, place),
+      isUserNearPlace(userPosition, { lat: place.lat, lon: place.lng }),
     );
 
     setNearbyPlace(nearby ?? null);
@@ -119,12 +120,20 @@ export function Messages() {
     try {
       setIsSending(true);
 
-      await sendSecretMessage(nearbyPlace.id, messageText.trim());
+    await sendSecretMessage(nearbyPlace.id, messageText.trim());
 
-      toast.success("Mensagem enviada!", {
-        description:
-          "Sua mensagem será moderada antes de aparecer para outros usuários.",
-      });
+    // Update Curador POA badge progress
+    const progress = addSecretMessage(String(nearbyPlace.id));
+
+    console.log(
+      "✉️ Secret messages progress:",
+      progress.secretMessages.length
+    );
+
+    toast.success("Mensagem enviada!", {
+      description:
+        "Sua mensagem será moderada antes de aparecer para outros usuários.",
+    });
 
       setMessageText("");
       setShowForm(false);
