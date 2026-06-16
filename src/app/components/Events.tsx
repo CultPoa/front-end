@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { CalendarView } from "./CalendarView";
+import { addEventParticipation } from "../utils/progress";
 
 interface EventLocation {
   name: string;
@@ -248,7 +249,19 @@ export function Events() {
                             >
                               Acessar evento
                             </a>
+                            <button
+                              onClick={() => {
+                                const progress = addEventParticipation(String(event.id));
 
+                                console.log(
+                                  "🎭 Eventos participados:",
+                                  progress.eventsAttended.length
+                                );
+                              }}
+                              className="h-11 px-4 rounded-full bg-[#E76F51] text-white flex items-center justify-center text-sm font-medium hover:opacity-90 transition"
+                            >
+                              🎭 Participei
+                            </button>
                             <a
                               href={buildGoogleCalendarUrl(event)}
                               target="_blank"

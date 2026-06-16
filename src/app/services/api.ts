@@ -1,5 +1,15 @@
 import { Place, CulturalPoint, typeColors } from "../types/place";
 
+interface ImportMetaEnv {
+  readonly VITE_API_URL?: string;
+}
+
+declare global {
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
+}
+
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL ?? "http://localhost:8000/api";
 
@@ -23,12 +33,14 @@ export const api = {
     }
 
     const data: Place[] = await res.json();
+    console.log("Places from API:", data);
 
     const mapped: CulturalPoint[] = data.map((el) => ({
       id: el.id,
       name: el.name || "Sem nome",
       lat: el.lat,
       lon: el.lon,
+      lng: el.lon,
       type: el.type,
       description: el.description,
       image:
@@ -63,6 +75,8 @@ export const api = {
     }
 
     const data: Place = await res.json();
+
+    console.log("API place types:", data.map(place => place.type));
     return data;
   },
 };
