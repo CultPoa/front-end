@@ -1,4 +1,5 @@
 import { Place, CulturalPoint, typeColors } from "../types/place";
+import { Badge } from "../utils/badges";
 
 interface ImportMetaEnv {
   readonly VITE_API_URL?: string;
@@ -14,6 +15,8 @@ export const API_BASE_URL =
   import.meta.env.VITE_API_URL ?? "http://localhost:8000/api";
 
 console.log(API_BASE_URL);
+
+const getAuthToken = () => localStorage.getItem("access_token");
 
 let placesCache: CulturalPoint[] | null = null;
 
@@ -79,4 +82,25 @@ export const api = {
     console.log("API place types:", data.map(place => place.type));
     return data;
   },
+async getUserBadges(): Promise<Badge[]> {
+    const token = localStorage.getItem("auth");
+
+    if (!token) throw new Error("No authentication token found.");
+
+    const res = await fetch(`${API_BASE_URL}/badge`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+    });
+
+    if (res.status === 401) throw new Error("Unauthorized");
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+    const data = await res.json();
+
+    return data.badges;
+  },
+
 };

@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
 import { Lock } from "lucide-react";
 import { motion } from "motion/react";
-import { getProgress } from "../utils/progress";
-import { getBadges, Badge } from "../utils/badges";
+import { api } from "../services/api"; // Path to your api.ts
+import { Badge } from "../utils/badges"; // Still import the interface for typing
 
 
 export function Badges() {
-
   const [badges, setBadges] = useState<Badge[]>([]);
-  const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
+  const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null); // <-- Ensure this spelling matches everywhere
 
-  useEffect(() => {
-    const progress = getProgress();
-    const userBadges = getBadges(progress);
-
-    setBadges(userBadges);
-  }, []);
+useEffect(() => {
+  api.getUserBadges()
+    .then((badgeData) => {
+      setBadges(badgeData);
+      console.log("API Badges:", badgeData);
+    })
+    .catch((err) => console.error("Error fetching badges:", err));
+}, []);
 
   const unlockedCount = badges.filter((b) => b.unlocked).length;
 
