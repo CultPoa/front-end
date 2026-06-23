@@ -1005,12 +1005,6 @@ export function Profile() {
   } = useAuth();
   const [showSettings, setShowSettings] = useState(false);
 
-  const stats = [
-    { label: "Locais visitados", value: "12", icon: MapPin, color: "#E63946" },
-    { label: "Insígnias", value: "5", icon: Award, color: "#F4A261" },
-    { label: "Eventos salvos", value: "8", icon: Calendar, color: "#2A9D8F" },
-  ];
-
   if (!isAuthenticated) return <AuthPage onLogin={login} />;
 
   if (loadingUser) {
@@ -1090,32 +1084,6 @@ export function Profile() {
       </div>
 
       <div className="-mt-16 px-4">
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
-          <div className="grid grid-cols-3 gap-4">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex flex-col items-center text-center"
-                >
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center mb-2"
-                    style={{ backgroundColor: `${stat.color}20` }}
-                  >
-                    <Icon className="w-6 h-6" style={{ color: stat.color }} />
-                  </div>
-                  <p className="text-2xl text-gray-900 mb-1">{stat.value}</p>
-                  <p className="text-xs text-gray-600">{stat.label}</p>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-
         <div className="space-y-3">
           <button
             onClick={() => setShowSettings(true)}
