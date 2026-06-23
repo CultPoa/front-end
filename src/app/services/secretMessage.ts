@@ -16,8 +16,6 @@ export async function sendSecretMessage(placeId: string, content: string) {
 
   if (!res.ok) throw new Error("Erro ao enviar mensagem");
 
-  console.log(res);
-
   return res.json();
 }
 

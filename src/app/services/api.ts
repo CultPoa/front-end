@@ -43,7 +43,6 @@ export const api = {
     }
 
     const data: Place[] = await res.json();
-    console.log("Places from API:", data);
 
     const mapped: CulturalPoint[] = data.map((el) => ({
       id: el.id,
@@ -87,10 +86,6 @@ export const api = {
 
     const data: Place = await res.json();
 
-    console.log(
-      "API place types:",
-      data.map((place) => place.type),
-    );
     return data;
   },
 
