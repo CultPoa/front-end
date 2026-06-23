@@ -521,13 +521,20 @@ function LeafletMap({
           <Marker
             key={place.id}
             position={[place.lat, place.lon]}
-            icon={clickedMarkers.has(place.id) ? createPlaceIconClicked(place.type) : createPlaceIcon(place.type)}
+            icon={
+              clickedMarkers.has(place.id)
+                ? createPlaceIconClicked(place.type)
+                : createPlaceIcon(place.type)
+            }
             eventHandlers={{
               click: () => {
                 const newClickedMarkers = new Set(clickedMarkers);
                 newClickedMarkers.add(place.id);
                 setClickedMarkers(newClickedMarkers);
-                localStorage.setItem(CLICKED_MARKERS_KEY, JSON.stringify([...newClickedMarkers]));
+                localStorage.setItem(
+                  CLICKED_MARKERS_KEY,
+                  JSON.stringify([...newClickedMarkers]),
+                );
                 onMarkerClick(place.id);
               },
             }}

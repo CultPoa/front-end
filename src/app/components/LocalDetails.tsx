@@ -15,7 +15,7 @@ import { motion } from "motion/react";
 import { toast } from "sonner";
 import { CulturalPoint, Place } from "../types/place";
 import { haversineDistance, isUserNearPlace } from "../utils/geo";
-import { getBadges } from "../utils/badges";
+import { getBadges } from "../types/badges";
 import { api } from "../services/api";
 
 export const handleLocalType = (type: string): string => {

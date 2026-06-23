@@ -1,5 +1,5 @@
 import { Place, CulturalPoint, typeColors } from "../types/place";
-import { Badge } from "../utils/badges";
+import { Badge } from "../types/badges";
 
 interface ImportMetaEnv {
   readonly VITE_API_URL?: string;

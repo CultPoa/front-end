@@ -1,10 +1,13 @@
-import { MapPin, Building2, Landmark, Calendar, Palette, Filter, Loader } from 'lucide-react';
+import {
+  Building2,
+  Landmark,
+  Calendar,
+  Palette,
+  Filter,
+  Loader,
+} from "lucide-react";
 
-export type PlaceType =
-  | "museum"
-  | "monument"
-  | "event"
-  | "art";
+export type PlaceType = "museum" | "monument" | "event" | "art";
 
 export interface Place {
   map(arg0: (place: any) => any): any;
@@ -33,10 +36,10 @@ export interface CulturalPoint {
 }
 
 export const typeColors: Record<string, string> = {
-  museum: '#E63946',
-  monument: '#F4A261',
-  event: '#E76F51',
-  art: '#2A9D8F',
+  museum: "#E63946",
+  monument: "#F4A261",
+  event: "#E76F51",
+  art: "#2A9D8F",
 };
 
 export const typeIcons: Record<string, any> = {

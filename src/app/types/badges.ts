@@ -1,5 +1,3 @@
-import { UserProgress } from "./progress";
-
 export interface Badge {
   id: string;
   name: string;

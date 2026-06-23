@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Lock } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { api } from "../services/api";
-import { Badge } from "../utils/badges";
+import { Badge } from "../types/badges";
 
 type ErrorState = "auth" | "any" | null;
 
