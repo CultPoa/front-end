@@ -17,7 +17,6 @@ import {
   sendSecretMessage,
   fetchNewestMessage,
 } from "../services/secretMessage";
-import { addSecretMessage } from "../utils/progress";
 
 interface Message {
   id: string;
@@ -120,20 +119,12 @@ export function Messages() {
     try {
       setIsSending(true);
 
-    await sendSecretMessage(nearbyPlace.id, messageText.trim());
+      await sendSecretMessage(nearbyPlace.id, messageText.trim());
 
-    // Update Curador POA badge progress
-    const progress = addSecretMessage(String(nearbyPlace.id));
-
-    console.log(
-      "✉️ Secret messages progress:",
-      progress.secretMessages.length
-    );
-
-    toast.success("Mensagem enviada!", {
-      description:
-        "Sua mensagem será moderada antes de aparecer para outros usuários.",
-    });
+      toast.success("Mensagem enviada!", {
+        description:
+          "Sua mensagem será moderada antes de aparecer para outros usuários.",
+      });
 
       setMessageText("");
       setShowForm(false);
@@ -419,47 +410,6 @@ export function Messages() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <div className="space-y-4">
-          <h2 className="text-gray-900 px-1 font-medium">
-            Suas mensagens anteriores
-          </h2>
-
-          {MOCK_PAST_MESSAGES.map((message, index) => (
-            <motion.div
-              key={message.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-2xl p-5 shadow-sm"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="text-gray-900 font-medium">
-                    {message.locationName}
-                  </h3>
-
-                  <p className="text-xs text-gray-500">
-                    {new Date(message.date).toLocaleDateString("pt-BR", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
-
-              <p className="text-gray-700 leading-relaxed">{message.text}</p>
-
-              <button
-                onClick={() => navigate(`/local/${message.locationId}`)}
-                className="mt-4 text-sm text-[#E63946] hover:underline"
-              >
-                Ver local
-              </button>
-            </motion.div>
-          ))}
-        </div>
       </div>
     </div>
   );

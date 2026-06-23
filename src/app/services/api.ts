@@ -11,6 +11,12 @@ declare global {
   }
 }
 
+interface BadgesResponse {
+  readonly total: number;
+  readonly unlocked: number;
+  readonly badges: Badge[];
+}
+
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL ?? "http://localhost:8000/api";
 
@@ -19,6 +25,7 @@ console.log(API_BASE_URL);
 const getAuthToken = () => localStorage.getItem("access_token");
 
 let placesCache: CulturalPoint[] | null = null;
+let placesMapCache: Map<string, CulturalPoint> | null = null;
 
 export const api = {
   async getAllPlaces(): Promise<CulturalPoint[]> {
@@ -57,6 +64,7 @@ export const api = {
     }));
 
     placesCache = mapped;
+    placesMapCache = new Map(mapped.map((place) => [place.id, place]));
     return mapped;
   },
 
@@ -79,19 +87,23 @@ export const api = {
 
     const data: Place = await res.json();
 
-    console.log("API place types:", data.map(place => place.type));
+    console.log(
+      "API place types:",
+      data.map((place) => place.type),
+    );
     return data;
   },
-async getUserBadges(): Promise<Badge[]> {
+
+  async getUserBadges(): Promise<BadgesResponse> {
     const token = localStorage.getItem("auth");
 
-    if (!token) throw new Error("No authentication token found.");
+    if (!token) throw new Error("auth");
 
     const res = await fetch(`${API_BASE_URL}/badge`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -99,8 +111,28 @@ async getUserBadges(): Promise<Badge[]> {
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
     const data = await res.json();
-
-    return data.badges;
+    return data;
   },
 
+  async unlockBadge(placeId: string): Promise<any> {
+    const token = localStorage.getItem("auth");
+
+    if (!token) throw new Error("auth");
+
+    const res = await fetch(`${API_BASE_URL}/badge`, {
+      method: "POST",
+      body: JSON.stringify({
+        placeId,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.status === 401) throw new Error("Unauthorized");
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+    return res;
+  },
 };
