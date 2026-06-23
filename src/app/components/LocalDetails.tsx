@@ -13,14 +13,10 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
-import { Place } from "../types/place";
+import { CulturalPoint, Place } from "../types/place";
 import { haversineDistance, isUserNearPlace } from "../utils/geo";
-import {
-  checkInPlace,
-  getProgress,
-  addPhotoShare
-} from "../utils/progress";
 import { getBadges } from "../utils/badges";
+import { api } from "../services/api";
 
 export const handleLocalType = (type: string): string => {
   const typesNames: Record<string, string> = {
@@ -39,12 +35,11 @@ export function LocalDetails() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [local, setLocal] = useState<Place | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isNear, setIsNear] = useState(false);
-  const [checkingLocation, setCheckingLocation] = useState(true);
-  const [badges, setBadges] = useState(() => {
-  const progress = getProgress();
-    return getBadges(progress);
-  });
+  const [userPosition, setUserPosition] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
+  const [isNearbyPlace, setIsNearbyPlace] = useState<boolean | null>(null);
 
   useEffect(() => {
     const fetchPlace = async () => {
@@ -67,53 +62,38 @@ export function LocalDetails() {
   }, [id]);
 
   useEffect(() => {
-    if (!local || !navigator.geolocation) {
-      setCheckingLocation(false);
+    if (!navigator.geolocation) return;
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) =>
+        setUserPosition({
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude,
+        }),
+      (err) => console.error("Erro de geolocalização:", err),
+      { enableHighAccuracy: true },
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, []);
+
+  useEffect(() => {
+    if (!userPosition) {
+      setIsNearbyPlace(null);
       return;
     }
 
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        const userPosition = {
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
-        };
+    const isUserNearbyPlace = isUserNearPlace(userPosition, {
+      lat: local?.lat,
+      lon: local?.lon,
+    });
 
-        console.log("📍 Your GPS:", userPosition);
-        console.log("🏛️ Place GPS:", {
-          lat: local.lat,
-          lon: local.lon,
-          name: local.name,
-        });
+    if (!isUserNearPlace) {
+      return;
+    }
 
-        const near = isUserNearPlace(userPosition, local);
-
-        const distance = haversineDistance(
-          userPosition.lat,
-          userPosition.lon,
-          local.lat,
-          local.lon
-        );
-
-        console.log("📏 Distance:", distance.toFixed(2), "meters");
-        console.log("🚶 Is near?", near);
-
-        setIsNear(near);
-        setCheckingLocation(false);
-      },
-      (error) => {
-        console.error("Erro de localização:", error);
-        setCheckingLocation(false);
-      },
-      {
-        enableHighAccuracy: true,
-      }
-    );
-
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
-    };
-  }, [local]);
+    setIsNearbyPlace(isUserNearbyPlace ?? null);
+  }, [userPosition]);
 
   const images = local?.image ? [local.image] : [];
 
@@ -167,33 +147,16 @@ export function LocalDetails() {
 
     return hasPortoAlegre ? typeAndName : `${typeAndName} Porto Alegre`;
   }
-  function handleCheckIn() {
-    if (!local) return;
 
-    if (!isNear) {
-      toast.error("❌ Você precisa se aproximar para fazer check-in.");
+  async function handleGetBadge() {
+    if (local === null) {
       return;
     }
 
-    const progress = checkInPlace(local);
-
-    setBadges(getBadges(progress));
-
-    console.log("🏆 Novo progresso:", progress);
-
-    toast.success("🏆 Check-in realizado com sucesso!");
+    await api.unlockBadge(local?.id);
+    toast.success("Insígnia coletada!");
   }
-  function handlePhotoShare() {
-    const progress = addPhotoShare();
 
-    setBadges(getBadges(progress));
-
-    console.log("📸 Foto compartilhada:", progress);
-
-    toast.success(
-      `📸 Foto compartilhada! ${progress.photosShared}/20`
-    );
-  }
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <div className="fixed top-4 left-0 right-0 z-50 flex justify-between px-4 pointer-events-none">
@@ -202,13 +165,6 @@ export function LocalDetails() {
           className="pointer-events-auto w-10 h-10 bg-white/70 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
         >
           <ArrowLeft className="w-5 h-5 text-gray-700" />
-        </button>
-
-        <button
-          onClick={handlePhotoShare}
-          className="pointer-events-auto w-10 h-10 bg-white/70 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
-        >
-          <Share2 className="w-5 h-5 text-gray-700" />
         </button>
       </div>
 
@@ -270,48 +226,6 @@ export function LocalDetails() {
 
       <div className="relative z-10 -mt-6 bg-[#FAFAFA] rounded-t-[32px] px-6 py-8 pb-32">
         <div className="space-y-8">
-          {/* <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-300">
-            <h3 className="font-bold mb-2">
-              🏆 Badge Debug
-            </h3>
-
-            {badges.map((badge) => (
-              <div key={badge.id} className="text-sm mb-2">
-                {badge.unlocked ? "✅" : "🔒"}{" "}
-                {badge.name} ({badge.progress}/{badge.goal})
-              </div>
-            ))}
-          </div>
-          Temporary geolocation status
-          <div className="p-4 rounded-xl bg-white shadow-sm">
-            {checkingLocation ? (
-              <p>📍 Verificando sua localização...</p>
-            ) : isNear ? (
-              <p className="text-green-600">
-                ✅ Você está próximo deste local!
-              </p>
-            ) : (
-              <p className="text-red-600">
-                ❌ Você precisa se aproximar para fazer check-in.
-              </p>
-            )}
-          </div> */}
-
-          <button
-            onClick={handleCheckIn}
-            disabled={!isNear}
-            className={`
-              w-full py-3 rounded-xl font-semibold transition-colors
-              ${
-                isNear
-                  ? "bg-[#E63946] text-white"
-                  : "bg-gray-200 text-gray-500"
-              }
-            `}
-          >
-            🏆 Fazer Check-in
-          </button>
-
           <div className="overflow-x-auto no-scrollbar w-full">
             <div className="flex gap-3 w-max pr-6">
               <a
@@ -374,6 +288,16 @@ export function LocalDetails() {
                 {local.description}
               </p>
             </div>
+          )}
+
+          {isNearbyPlace && (
+            <button
+              onClick={handleGetBadge}
+              className="shrink-0 inline-flex items-center gap-2 h-11 px-5 rounded-full bg-white border border-[#E63946]/20 text-[#E63946] shadow-sm hover:shadow-md hover:border-[#E63946]/40 transition-all font-medium"
+            >
+              <span className="text-lg">🏅</span>
+              <span>Coletar insígnia</span>
+            </button>
           )}
         </div>
       </div>
