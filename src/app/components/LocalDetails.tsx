@@ -166,6 +166,29 @@ export function LocalDetails() {
         >
           <ArrowLeft className="w-5 h-5 text-gray-700" />
         </button>
+        <button
+          onClick={async () => {
+            const url = window.location.href;
+
+            try {
+              await navigator.clipboard.writeText(url);
+
+              if (navigator.share) {
+                await navigator.share({
+                  title: document.title,
+                  url,
+                });
+              } else {
+                toast.info("Link copiado para a área de transferência");
+              }
+            } catch {
+              toast.error("Não foi possível compartilhar o link");
+            }
+          }}
+          className="pointer-events-auto w-10 h-10 bg-white/70 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
+        >
+          <Share2 className="w-5 h-5 text-gray-700" />
+        </button>{" "}
       </div>
 
       <div className="relative h-[42vh] overflow-hidden bg-gray-100">

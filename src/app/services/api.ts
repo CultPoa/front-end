@@ -68,12 +68,7 @@ export const api = {
   },
 
   async getPlaceById(id: string): Promise<Place> {
-    if (placesCache) {
-      const found = placesCache.find((p) => String(p.id) === String(id));
-      if (found) return found as unknown as Place;
-    }
-
-    const res = await fetch(`${API_BASE_URL}/places/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/places/?place_id=${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
