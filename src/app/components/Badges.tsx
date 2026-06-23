@@ -99,7 +99,7 @@ export function Badges() {
           </div>
         )}
 
-        {!loading && error === "auth" && (
+        {!loading && error && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -117,14 +117,6 @@ export function Badges() {
               </div>
             </div>
           </motion.div>
-        )}
-
-        {!loading && error === "any" && (
-          <div className="text-center py-10">
-            <span className="text-red-600 text-sm">
-              Erro ao carregar insígnias.
-            </span>
-          </div>
         )}
 
         {!loading && !error && badges.length === 0 && (
