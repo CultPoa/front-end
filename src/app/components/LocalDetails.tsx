@@ -164,19 +164,11 @@ export function LocalDetails() {
     toast.success("Insígnia coletada!");
   }
 
-  const handleBack = () => {
-    if (location.key !== "default") {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
-  };
-
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <div className="fixed top-4 left-0 right-0 z-50 flex justify-between px-4 pointer-events-none">
         <button
-          onClick={() => handleBack()}
+          onClick={() => navigate("/")}
           className="pointer-events-auto w-10 h-10 bg-white/70 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
         >
           <ArrowLeft className="w-5 h-5 text-gray-700" />
