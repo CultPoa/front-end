@@ -83,7 +83,7 @@ export function Events() {
     const fetchEvents = async () => {
       try {
         const response = await fetch(
-          "https://www.sympla.com.br/api/discovery-bff/search/category-type?service=%2Fv4%2Fsearch%2Fquery&only=name,start_date,end_date,images,event_type,duration_type,location,id,global_score,start_date_formats,end_date_formats,url,company,type,organizer&has_banner=1&themes=99&sort=day-trending-score&formats=80,87,89&type=normal&city=Porto+Alegre&limit=10&location=Porto+Alegre&page=1&dt=&p=",
+          "https://www.sympla.com.br/api/discovery-bff/search/category-type?service=%2Fv4%2Fsearch%2Fquery&only=name,start_date,end_date,images,event_type,duration_type,location,id,global_score,start_date_formats,end_date_formats,url,company,type,organizer&has_banner=1&themes=99&sort=day-trending-score&formats=80,87,89&type=normal&city=Porto+Alegre&limit=30&location=Porto+Alegre&page=1&dt=&p=",
 
           {
             headers: {
@@ -174,11 +174,11 @@ export function Events() {
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h2 className="font-['Dongle'] text-gray-700 font-bold text-5xl">
-                    Bombando no momento
+                    Populares
                   </h2>
 
                   <p className="text-m text-gray-500">
-                    Os dez eventos mais populares da semana!
+                    Os eventos mais vistos na semana
                   </p>
                 </div>
               </div>

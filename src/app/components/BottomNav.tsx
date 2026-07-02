@@ -51,9 +51,7 @@ export function BottomNav() {
                 className={`text-xs relative z-10 transition-colors ${
                   isActive ? "text-[#E63946]" : "text-gray-500"
                 }`}
-              >
-                {/* {item.label} */}
-              </span>
+              ></span>
             </button>
           );
         })}
