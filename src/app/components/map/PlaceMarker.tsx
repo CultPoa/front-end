@@ -1,13 +1,15 @@
-import { Marker, Popup } from 'react-leaflet';
-import { useNavigate } from 'react-router-dom';
-import L from 'leaflet';
-import { CulturalPoint } from '../../types/place';
-import { useWikipedia } from '../../hooks/useWikipedia';
-import { ExternalLink } from 'lucide-react';
+import { Marker, Popup } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
+import L from "leaflet";
+import { CulturalPoint } from "../../types/place";
+import { useWikipedia } from "../../hooks/useWikipedia";
+import { ExternalLink } from "lucide-react";
 
 const createIcon = (color: string) => {
   return new L.Icon({
-    iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+    iconUrl:
+      "data:image/svg+xml;base64," +
+      btoa(`
       <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
         <circle cx="16" cy="16" r="14" fill="${color}" stroke="white" stroke-width="2"/>
       </svg>
@@ -22,6 +24,14 @@ interface PlaceMarkerProps {
   place: CulturalPoint;
 }
 
+const getWikiUrl = (value: string): string => {
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value;
+  }
+
+  return `https://pt.wikipedia.org/wiki/${encodeURIComponent(value)}`;
+};
+
 export function PlaceMarker({ place }: PlaceMarkerProps) {
   const navigate = useNavigate();
   const { cache, fetchWikipediaData } = useWikipedia();
@@ -29,11 +39,11 @@ export function PlaceMarker({ place }: PlaceMarkerProps) {
   const handleClick = async () => {
     if (!place.wikipedia) return;
 
-    const title = place.wikipedia.split(':')[1] || place.wikipedia;
+    const title = place.wikipedia.split(":")[1] || place.wikipedia;
     await fetchWikipediaData(title);
   };
 
-  const wikiTitle = place.wikipedia?.split(':')[1] || place.wikipedia;
+  const wikiTitle = place.wikipedia?.split(":")[1] || place.wikipedia;
   const wikiData = wikiTitle ? cache[wikiTitle] : null;
   const image = place.image || wikiData?.image;
   const description = place.description || wikiData?.extract;
@@ -54,7 +64,7 @@ export function PlaceMarker({ place }: PlaceMarkerProps) {
               alt={place.name}
               className="w-full rounded-lg mb-3"
               onError={(e) => {
-                e.currentTarget.style.display = 'none';
+                e.currentTarget.style.display = "none";
               }}
             />
           )}
@@ -75,7 +85,7 @@ export function PlaceMarker({ place }: PlaceMarkerProps) {
 
             {place.wikipedia && wikiTitle && (
               <a
-                href={`https://pt.wikipedia.org/wiki/${wikiTitle}`}
+                href={getWikiUrl(wikiTitle)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
