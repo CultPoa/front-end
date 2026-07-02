@@ -22,6 +22,16 @@ export function BottomNav() {
     { path: "/perfil", icon: User, label: "Perfil" },
   ];
 
+  const handleNavClick = (path: string) => {
+    const isSamePath = location.pathname === path;
+
+    if (isSamePath && path === "/") {
+      window.dispatchEvent(new CustomEvent("map:reset"));
+    } else {
+      navigate(path);
+    }
+  };
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
       <div className="flex items-center justify-around px-2 py-2">
@@ -32,7 +42,7 @@ export function BottomNav() {
           return (
             <button
               key={item.path}
-              onClick={() => navigate(item.path)}
+              onClick={() => handleNavClick(item.path)}
               className="relative flex flex-col items-center gap-1 px-4 py-2 flex-1"
             >
               {isActive && (

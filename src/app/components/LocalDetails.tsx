@@ -30,7 +30,10 @@ export const handleLocalType = (type: string): string => {
     museum: "Museu",
     monument: "Monumento",
     event: "Evento",
+    artwork: "Obra de Arte",
     art: "Arte",
+    attraction: "Ponto Cultural",
+    memorial: "Memorial",
   };
 
   return typesNames[type] ?? type;

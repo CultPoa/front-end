@@ -111,6 +111,15 @@ export function MapView() {
     setNearbyPlace(nearby ?? null);
   }, [userPosition, culturalPoints]);
 
+  useEffect(() => {
+    const handler = () => {
+      setFollowUser(true);
+    };
+
+    window.addEventListener("map:reset", handler);
+    return () => window.removeEventListener("map:reset", handler);
+  }, []);
+
   const filters = [
     { id: "all", label: "Todos", icon: MapPin },
     { id: "museum", label: "Museus", icon: Building2 },
