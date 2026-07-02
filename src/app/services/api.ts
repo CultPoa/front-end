@@ -20,10 +20,6 @@ interface BadgesResponse {
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL ?? "http://localhost:8000/api";
 
-console.log(API_BASE_URL);
-
-const getAuthToken = () => localStorage.getItem("access_token");
-
 let placesCache: CulturalPoint[] | null = null;
 let placesMapCache: Map<string, CulturalPoint> | null = null;
 

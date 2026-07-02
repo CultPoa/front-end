@@ -13,10 +13,17 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
-import { CulturalPoint, Place } from "../types/place";
-import { haversineDistance, isUserNearPlace } from "../utils/geo";
-import { getBadges } from "../types/badges";
+import { Place } from "../types/place";
+import { isUserNearPlace } from "../utils/geo";
 import { api } from "../services/api";
+
+const getWikipediaUrl = (value: string) => {
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value;
+  }
+
+  return `https://wikipedia.org/wiki/${value}`;
+};
 
 export const handleLocalType = (type: string): string => {
   const typesNames: Record<string, string> = {
@@ -277,7 +284,7 @@ export function LocalDetails() {
 
               {local.wikipedia && (
                 <a
-                  href={`https://wikipedia.org/wiki/${local.wikipedia}`}
+                  href={getWikipediaUrl(local.wikipedia)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="shrink-0 h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
