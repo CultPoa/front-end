@@ -107,8 +107,8 @@ export function Events() {
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-24">
       <div className="sticky top-0 bg-[#FAFAFA]/80 backdrop-blur-md z-20 border-b border-black/5">
-        <div className="px-4 py-4 flex items-center justify-between">
-          <h1 className='font-["Dongle"] text-[#E63946] font-bold text-5xl leading-none'>
+        <div className="px-4 py-4 flex items-center justify-between gap-3">
+          <h1 className='font-["Dongle"] text-[#E63946] font-bold text-4xl leading-none'>
             Eventos
           </h1>
           <div className="flex items-center gap-2 bg-gray-100 rounded-full p-1">
@@ -154,7 +154,7 @@ export function Events() {
               <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-black/10 rounded-full blur-3xl" />
 
               <div className="relative z-10">
-                <h2 className="text-3xl font-bold leading-tight mb-3 max-w-xs">
+                <h2 className="text-1xl font-bold leading-tight mb-3 max-w-xs">
                   Eventos em Porto Alegre
                 </h2>
 

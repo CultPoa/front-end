@@ -1,5 +1,12 @@
 import { useState, useMemo } from "react";
-import { Calendar as CalendarIcon, Clock, MapPin, Loader2, ExternalLink, Bookmark } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  MapPin,
+  Loader2,
+  Bookmark,
+  Sparkles,
+} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Calendar } from "./ui/calendar";
 import { Card } from "./ui/card";
@@ -39,6 +46,9 @@ function parseStartDate(isoDate: string) {
       year: "numeric",
     }),
     time: d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+    weekday: d
+      .toLocaleDateString("pt-BR", { weekday: "short" })
+      .replace(".", ""),
     dateObj: d,
   };
 }
@@ -80,9 +90,10 @@ interface CalendarViewProps {
 }
 
 export function CalendarView({ events, loading }: CalendarViewProps) {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date(),
+  );
 
-  // Get all dates that have events
   const datesWithEvents = useMemo(() => {
     const dates = new Set<string>();
     events.forEach((event) => {
@@ -92,10 +103,8 @@ export function CalendarView({ events, loading }: CalendarViewProps) {
     return dates;
   }, [events]);
 
-  // Filter events for selected date
   const eventsOnSelectedDate = useMemo(() => {
     if (!selectedDate) return [];
-
     const selectedDateStr = selectedDate.toISOString().split("T")[0];
     return events.filter((event) => {
       const eventDateStr = new Date(event.start_date)
@@ -106,73 +115,111 @@ export function CalendarView({ events, loading }: CalendarViewProps) {
   }, [selectedDate, events]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Calendar Section */}
-        <div className="lg:w-80 flex-shrink-0">
-          <Card className="p-4 bg-white rounded-2xl border border-gray-200 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <CalendarIcon className="w-5 h-5 text-[#E63946]" />
-              <h3 className="font-semibold text-gray-800">Selecione um dia</h3>
+    <div className="space-y-6 rounded-3xl">
+      <div className="flex flex-col lg:flex-row gap-6 p-1">
+        {/* Sidebar: calendário + resumo do dia */}
+        <div className="lg:w-80 flex-shrink-0 lg:sticky lg:top-4 lg:self-start">
+          <Card className="p-5 bg-white rounded-[28px] border border-[#EDE4D3] shadow-[0_8px_30px_-12px_rgba(38,33,28,0.15)] overflow-hidden">
+            <div className="flex items-center gap-2.5 mb-4">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#E63946]/10">
+                <CalendarIcon className="w-4 h-4 text-[#E63946]" />
+              </span>
+              <div>
+                <h3 className="font-semibold text-[#26211C] text-base">
+                  Selecione um dia
+                </h3>
+              </div>
             </div>
+
             <Calendar
               mode="single"
               selected={selectedDate}
               onSelect={setSelectedDate}
               disabled={(date) => {
-                // Disable dates in the past
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 return date < today;
               }}
+              modifiers={{
+                hasEvents: (date) =>
+                  datesWithEvents.has(date.toISOString().split("T")[0]),
+              }}
+              modifiersClassNames={{
+                hasEvents:
+                  "relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-[#E63946]",
+              }}
               className="w-full"
             />
+
+            {/* Canhoto do dia selecionado */}
             {selectedDate && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <p className="text-sm text-gray-600">
-                  <span className="font-semibold text-gray-800">
+              <div className="mt-5 relative rounded-2xl bg-[#26211C] text-[#FAF6EF] px-4 py-4 flex items-center gap-4 overflow-hidden">
+                <span
+                  className="absolute -left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-[#FAF6EF]"
+                  aria-hidden="true"
+                />
+                <span
+                  className="absolute -right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-[#FAF6EF]"
+                  aria-hidden="true"
+                />
+                <div
+                  className="font-['Dongle'] leading-none text-5xl font-bold text-[#E9B44C]"
+                  aria-hidden="true"
+                >
+                  {String(selectedDate.getDate()).padStart(2, "0")}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs uppercase tracking-wide text-[#FAF6EF]/70">
                     {selectedDate.toLocaleDateString("pt-BR", {
-                      day: "numeric",
                       month: "long",
                       year: "numeric",
                     })}
-                  </span>
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {eventsOnSelectedDate.length === 0
-                    ? "Nenhum evento"
-                    : `${eventsOnSelectedDate.length} evento${
-                        eventsOnSelectedDate.length > 1 ? "s" : ""
-                      }`}
-                </p>
+                  </p>
+                  <p className="text-sm font-medium text-[#FAF6EF] mt-0.5">
+                    {eventsOnSelectedDate.length === 0
+                      ? "Nenhum evento"
+                      : `${eventsOnSelectedDate.length} evento${eventsOnSelectedDate.length > 1 ? "s" : ""} programado${eventsOnSelectedDate.length > 1 ? "s" : ""}`}
+                  </p>
+                </div>
               </div>
             )}
           </Card>
         </div>
 
-        {/* Events Section */}
-        <div className="flex-1">
+        {/* Conteúdo: lista de eventos */}
+        <div className="flex-1 min-w-0">
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-              <Loader2 className="w-8 h-8 animate-spin mb-3" />
-              <p>Carregando eventos...</p>
+            <div className="space-y-4" aria-busy="true" aria-live="polite">
+              <span className="sr-only">Carregando eventos…</span>
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="h-48 rounded-[28px] bg-white border border-[#EDE4D3] overflow-hidden animate-pulse flex"
+                >
+                  <div className="w-48 h-full bg-[#F1EAD9] flex-shrink-0" />
+                  <div className="flex-1 p-5 space-y-3">
+                    <div className="h-3 w-20 bg-[#F1EAD9] rounded-full" />
+                    <div className="h-4 w-3/4 bg-[#F1EAD9] rounded-full" />
+                    <div className="h-3 w-1/2 bg-[#F1EAD9] rounded-full" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : selectedDate ? (
             <div>
               <div className="mb-6">
-                <h2 className='font-["Dongle"] text-gray-700 font-bold text-4xl mb-2'>
+                <p className="text-[11px] font-semibold tracking-[0.18em] text-[#E63946] uppercase mb-1 flex items-center gap-1.5"></p>
+                <h2 className="font-['Dongle'] text-[#26211C] font-bold text-5xl leading-none mb-2">
                   {selectedDate.toLocaleDateString("pt-BR", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
                   })}
                 </h2>
-                <p className="text-gray-500">
+                <p className="text-[#7A7266]">
                   {eventsOnSelectedDate.length === 0
                     ? "Nenhum evento programado para este dia"
-                    : `${eventsOnSelectedDate.length} evento${
-                        eventsOnSelectedDate.length > 1 ? "s" : ""
-                      } programado${eventsOnSelectedDate.length > 1 ? "s" : ""}`}
+                    : `Há ${eventsOnSelectedDate.length} evento${eventsOnSelectedDate.length > 1 ? "s" : ""} programado${eventsOnSelectedDate.length > 1 ? "s" : ""}`}
                 </p>
               </div>
 
@@ -183,14 +230,16 @@ export function CalendarView({ events, loading }: CalendarViewProps) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="text-center py-12 bg-gray-50 rounded-2xl border border-gray-200"
+                    className="text-center py-16 bg-white rounded-[28px] border border-dashed border-[#DDD2BB]"
                   >
-                    <CalendarIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500">
-                      Nenhum evento encontrado para este dia.
+                    <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#F1EAD9] mb-4">
+                      <CalendarIcon className="w-6 h-6 text-[#B8AB8C]" />
+                    </span>
+                    <p className="text-[#26211C] font-medium">
+                      Nada marcado para este dia
                     </p>
-                    <p className="text-sm text-gray-400 mt-2">
-                      Escolha outra data para explorar eventos
+                    <p className="text-sm text-[#9C9080] mt-1">
+                      Escolha outra data no calendário para ver a agenda
                     </p>
                   </motion.div>
                 ) : (
@@ -202,7 +251,9 @@ export function CalendarView({ events, loading }: CalendarViewProps) {
                     className="space-y-4"
                   >
                     {eventsOnSelectedDate.map((event, index) => {
-                      const { date, time } = parseStartDate(event.start_date);
+                      const { time, weekday } = parseStartDate(
+                        event.start_date,
+                      );
                       const locationText = formatLocation(event.location);
 
                       return (
@@ -211,46 +262,70 @@ export function CalendarView({ events, loading }: CalendarViewProps) {
                           initial={{ opacity: 0, y: 12 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05 }}
-                          className="overflow-hidden rounded-[28px] bg-white border border-gray-200 hover:shadow-lg transition-shadow"
+                          className="group flex flex-col sm:flex-row rounded-[28px] bg-white border border-[#EDE4D3] hover:shadow-[0_12px_36px_-14px_rgba(38,33,28,0.22)] transition-shadow overflow-hidden"
                         >
-                          <div className="relative h-48 overflow-hidden bg-gray-100">
+                          {/* Imagem + selo de horário */}
+                          <div className="relative sm:w-48 h-48 sm:h-auto flex-shrink-0 overflow-hidden bg-[#F1EAD9]">
                             <img
                               src={event.images.lg || event.images.original}
                               alt={event.name}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                               onError={(e) => {
                                 (e.target as HTMLImageElement).style.opacity =
                                   "0";
                               }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                          </div>
-
-                          <div className="p-5">
-                            <div className="flex items-start gap-2 mb-3">
-                              <Clock className="w-4 h-4 text-[#E63946] flex-shrink-0 mt-0.5" />
-                              <p className="text-sm text-gray-600 font-medium">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+                            <div
+                              className="absolute top-3 left-3 bg-[#E9B44C] text-[#26211C] rounded-lg px-2.5 py-1 -rotate-3 shadow-md"
+                              aria-hidden="true"
+                            >
+                              <p className="font-['Dongle'] font-bold text-xl leading-none">
                                 {time}
                               </p>
+                              <p className="text-[9px] font-semibold uppercase tracking-wide leading-none mt-0.5">
+                                {weekday}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Linha de perfuração (canhoto de ingresso) */}
+                          <div className="relative hidden sm:block w-px bg-transparent">
+                            <div className="absolute inset-y-3 left-0 border-l-2 border-dashed border-[#EDE4D3]" />
+                            <span
+                              className="absolute -top-2.5 -left-2.5 w-5 h-5 rounded-full bg-[#FAF6EF]"
+                              aria-hidden="true"
+                            />
+                            <span
+                              className="absolute -bottom-2.5 -left-2.5 w-5 h-5 rounded-full bg-[#FAF6EF]"
+                              aria-hidden="true"
+                            />
+                          </div>
+
+                          {/* Conteúdo */}
+                          <div className="flex-1 p-5 flex flex-col">
+                            <div className="flex items-center gap-1.5 mb-2 sm:hidden text-[#E63946]">
+                              <Clock className="w-3.5 h-3.5" />
+                              <span className="text-xs font-semibold">
+                                {time}
+                              </span>
                             </div>
 
-                            <h3 className="text-lg font-semibold text-gray-800 leading-tight mb-3">
+                            <h3 className="text-lg font-semibold text-[#26211C] leading-snug mb-2.5">
                               {sanitizeEventName(event.name)}
                             </h3>
 
-                            <div className="flex items-start gap-2 mb-5">
-                              <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
-                              <p className="text-sm text-gray-600">
-                                {locationText}
-                              </p>
+                            <div className="flex items-start gap-2 mb-4 text-[#7A7266]">
+                              <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#9C9080]" />
+                              <p className="text-sm">{locationText}</p>
                             </div>
 
-                            <div className="flex gap-3">
+                            <div className="flex gap-3 mt-auto pt-4 border-t border-dashed border-[#EDE4D3]">
                               <a
                                 href={event.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex-1 h-11 rounded-full bg-[#2A9D8F] text-white flex items-center justify-center text-sm font-medium active:scale-[0.98] transition-transform hover:bg-[#237b6f]"
+                                className="flex-1 h-11 rounded-full bg-[#2A9D8F] text-white flex items-center justify-center text-sm font-medium active:scale-[0.98] transition-transform hover:bg-[#237b6f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2A9D8F]"
                               >
                                 Acessar evento
                               </a>
@@ -259,10 +334,11 @@ export function CalendarView({ events, loading }: CalendarViewProps) {
                                 href={buildGoogleCalendarUrl(event)}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="h-11 px-4 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-gray-50 transition-colors"
+                                className="h-11 px-4 rounded-full border border-[#EDE4D3] bg-white flex items-center justify-center hover:bg-[#FAF6EF] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26211C]"
                                 title="Adicionar ao Google Calendar"
+                                aria-label="Adicionar ao Google Calendar"
                               >
-                                <Bookmark className="w-4 h-4 text-gray-700" />
+                                <Bookmark className="w-4 h-4 text-[#26211C]" />
                               </a>
                             </div>
                           </div>

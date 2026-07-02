@@ -162,8 +162,7 @@ export function Share() {
           Compartilhe
         </h1>
         <p className="text-sm text-gray-600">
-          Publique sua experiência nos Stories usando a hashtag oficial do
-          projeto.
+          Publique sua experiência nas redes sociais.
         </p>
       </div>
       <div className="max-w-md mx-auto px-5 pt-8">
@@ -182,7 +181,7 @@ export function Share() {
                   <Camera className="w-10 h-10 text-white" />
                 </div>
 
-                <h2 className="text-lg text-gray-900 mb-2">Criar Story</h2>
+                <h2 className="text-lg text-gray-900 mb-2">Criar imagem</h2>
 
                 <p className="text-sm text-gray-500 text-center max-w-[240px]">
                   Tire uma foto ou escolha uma imagem da galeria.
@@ -249,10 +248,10 @@ export function Share() {
 
         <div className="mt-6 bg-[#E63946]/8 border border-[#E63946]/15 rounded-2xl p-4">
           <p className="text-sm text-gray-700 leading-relaxed">
-            Marque seus Stories com{" "}
+            Utilize a{" "}
             <span className="font-semibold text-[#E63946]">#cultpoa</span> para
             participar da comunidade e compartilhar lugares culturais de Porto
-            Alegre.
+            Alegre!
           </p>
         </div>
 

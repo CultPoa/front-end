@@ -176,20 +176,15 @@ export function LocalDetails() {
         <button
           onClick={async () => {
             const url = window.location.href;
+            await navigator.clipboard.writeText(url);
 
-            try {
-              await navigator.clipboard.writeText(url);
-
-              if (navigator.share) {
-                await navigator.share({
-                  title: document.title,
-                  url,
-                });
-              } else {
-                toast.info("Link copiado para a área de transferência");
-              }
-            } catch {
-              toast.error("Não foi possível compartilhar o link");
+            if (navigator.share) {
+              await navigator.share({
+                title: document.title,
+                url,
+              });
+            } else {
+              toast.info("Copiado para a área de transferência");
             }
           }}
           className="pointer-events-auto w-10 h-10 bg-white/70 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"

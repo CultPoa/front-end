@@ -26,23 +26,6 @@ interface Message {
   date: string;
 }
 
-const MOCK_PAST_MESSAGES: Message[] = [
-  {
-    id: "1",
-    locationId: "1",
-    locationName: "MARGS",
-    text: "Este museu é incrível! A coleção de arte moderna é de tirar o fôlego.",
-    date: "2026-04-20",
-  },
-  {
-    id: "2",
-    locationId: "2",
-    locationName: "Casa de Cultura Mario Quintana",
-    text: "Lugar perfeito para passar uma tarde. As exposições são sempre interessantes.",
-    date: "2026-04-18",
-  },
-];
-
 const getAuthToken = () => {
   return localStorage.getItem("auth");
 };
@@ -193,7 +176,9 @@ export function Messages() {
           Mensagens Secretas
         </h1>
 
-        <p className="text-sm text-gray-600">Deixe sua marca nos locais</p>
+        <p className="text-sm text-gray-600">
+          Deixe uma mensagem para o próximo
+        </p>
       </div>
 
       <div className="p-4 space-y-6">
@@ -402,8 +387,8 @@ export function Messages() {
                   </p>
 
                   <p className="text-sm text-gray-500 mt-1">
-                    Visite um ponto cultural do mapa para deixar uma mensagem
-                    secreta para quem passar depois de você.
+                    Visite um ponto do mapa e deixe uma mensagem secreta para
+                    quem passar depois de você.
                   </p>
                 </div>
               </div>
